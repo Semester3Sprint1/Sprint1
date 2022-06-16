@@ -1,0 +1,8 @@
+
+app config <command>
+
+Usage:
+
+app config --show             displays a list of the current config settings
+app config --reset            resets the config file with default settings
+app config --set              sets a specific config setting
