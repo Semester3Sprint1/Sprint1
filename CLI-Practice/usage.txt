@@ -6,6 +6,7 @@ Usage:
 app init --all                creates the folder structure and config file
 app init --mk                 creates the folder structure
 app init --cat                creates the config file with default settings
+app init --tok                creates the token file
 app config --show             displays a list of the current config settings
 app config --reset            resets the config file with default settings
 app config --set              sets a specific config setting

@@ -21,7 +21,7 @@ const configApp = () => {
       break;
     default:
       fs.readFile(
-        path.join(__dirname, "views", "config.txt"),
+        path.join(__dirname, "..", "views", "config.txt"),
         (error, data) => {
           if (error) throw error;
           else {
@@ -34,7 +34,7 @@ const configApp = () => {
 };
 
 const displayConfig = () => {
-  fs.readFile(path.join(__dirname, "config.json"), (error, data) => {
+  fs.readFile(path.join(__dirname, "..", "config.json"), (error, data) => {
     if (error) throw error;
     else {
       DEBUG && console.log("display current config settings");
@@ -46,7 +46,7 @@ const displayConfig = () => {
 const setConfig = () => {
   DEBUG && console.log("--- SET CONFIG ---");
   let match = false;
-  fs.readFile(path.join(__dirname, "config.json"), (error, data) => {
+  fs.readFile(path.join(__dirname, "..", "config.json"), (error, data) => {
     if (error) throw error;
     if (DEBUG) console.log(JSON.parse(data));
     let config = JSON.parse(data);
@@ -63,7 +63,7 @@ const setConfig = () => {
     }
 
     data = JSON.stringify(config, null, 2);
-    fs.writeFile("config.json", data, (error) => {
+    fs.writeFile("../config.json", data, (error) => {
       if (error) throw error;
       DEBUG && console.log("Changed config.json file to reflect updates");
     });
@@ -72,7 +72,7 @@ const setConfig = () => {
 
 const resetConfig = () => {
   let configData = JSON.stringify(configJson, null, 2);
-  fs.writeFile("config.json", configData, (err) => {
+  fs.writeFile("../config.json", configData, (err) => {
     if (err) throw err;
     else if (DEBUG) console.log("Config.json reset to default value");
   });

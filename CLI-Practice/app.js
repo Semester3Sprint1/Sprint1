@@ -1,7 +1,8 @@
 const fs = require("fs");
-const { configApp } = require("./config");
-const { initApp } = require("./init");
-const { tokenApp } = require("./token");
+const { configApp } = require("./js/config");
+const { initApp } = require("./js/init");
+const { tokenApp } = require("./js/token");
+const { runServer } = require("./js/server");
 global.DEBUG = true;
 const myArgs = process.argv.slice(2);
 
@@ -22,6 +23,11 @@ const myApp = () => {
     case "t":
       DEBUG && console.log("token app accessed");
       tokenApp();
+      break;
+    case "server":
+    case "s":
+      DEBUG && console.log("server accessed");
+      runServer();
       break;
     case "help":
     case "h":
