@@ -119,9 +119,7 @@ const editDetail = (arg, username, element) => {
   });
 };
 
-const newToken = (username) => {
-  let crc = crc32(username).toString(16);
-
+const newToken = (username, location = "") => {
   let now = new Date();
   let expires = addDays(now, 3);
 
@@ -137,10 +135,18 @@ const newToken = (username) => {
 }`);
 
   newToken.created = now.toLocaleDateString();
-  newToken.username = username;
-  newToken.email = prompt("Enter your email: ");
-  newToken.phone = prompt("Enter your phone number: ");
-  newToken.token = crc;
+  if (location === "client") {
+    let object = username;
+    newToken.username = object.name;
+    newToken.email = object.email;
+    newToken.phone = object.phone;
+    newToken.token = crc32(object.name).toString(16);
+  } else {
+    newToken.username = username;
+    newToken.email = prompt("Enter your email: ");
+    newToken.phone = prompt("Enter your phone number: ");
+    newToken.token = crc32(username).toString(16);
+  }
   newToken.expires = expires.toLocaleDateString();
 
   let userTokens = fs.readFileSync(tokenPath, "utf-8"); // Scan file, save list of users to this variable
@@ -165,4 +171,4 @@ const newToken = (username) => {
   });
 };
 
-module.exports = { tokenApp };
+module.exports = { tokenApp, newToken };

@@ -14,25 +14,6 @@ h1 {
   text-align: center;
 }
 
-button {
-  background-color: greenyellow;
-  border: 1px solid black;
-  border-radius: 8px;
-  transition: 0.2s;
-  padding: 8px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: grey;
-  transition: 0.2s;
-}
-
-button a {
-  color: black;
-  text-decoration: none;
-}
-
 .tokenHolder {
   margin: 3% auto;
   display: grid;
@@ -46,5 +27,74 @@ button a {
   display: flex;
   flex-direction: column;
   border: 2px solid black;
+  gap: 8px;
+}
+
+.token div {
+  display: flex;
+  justify-content: space-between;
+}
+
+#summonToken {
   text-align: center;
+  margin: auto 12.5%;
+  width: 75%;
+  font-weight: 700;
+  background-color: lightseagreen;
+  border: 1px solid black;
+  border-radius: 8px;
+  transition: 0.2s;
+  padding: 8px;
+  cursor: pointer;
+}
+
+#home {
+  text-align: center;
+  margin: auto;
+  width: 75%;
+  font-weight: 700;
+  background-color: lightseagreen;
+  border: 1px solid black;
+  border-radius: 8px;
+  transition: 0.2s;
+  padding: 8px;
+  cursor: pointer;
+}
+
+#summonToken:hover,
+#home:hover {
+  background-color: grey;
+  transition: 0.2s;
+}
+
+#summonToken a,
+#home {
+  color: black;
+  text-decoration: none;
+}
+
+#newToken {
+  display: grid;
+  margin: 3% auto;
+  border: 1px solid black;
+  padding: 2em;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  background-color: bisque;
+}
+
+#newToken label {
+  font-weight: 700;
+  font-size: 1.2em;
+}
+
+#newToken input {
+  border-radius: 8px;
+  height: 1.5em;
+  transition: ease-in-out 0.2s;
+}
+
+#newToken input:hover {
+  background-color: lightgrey;
+  transition: ease-in-out 0.2s;
 }
