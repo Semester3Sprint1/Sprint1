@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/style" />
+  </head>
+  <body>
+    <h1>Tokens</h1>
+    <div>
+      <button id="summonToken">Summon the tokens!</button> <br />
+      <a href="http://localhost:3000/">Click me to go home.</a>
+    </div>
+
+    <div class="tokenHolder"></div>
+
+    <script>
+      var button = document.getElementById("summonToken");
+      var container = document.querySelector(".tokenHolder");
+
+      const fetchToken = async (id) => {
+        try {
+          const res = await fetch(`http://localhost:3000/tokens/${id}`);
+          const data = await res.json();
+          console.log(data);
+          return data;
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      const fetchTokens = async () => {
+        try {
+          const res = await fetch("http://localhost:3000/tokens");
+          const data = await res.json();
+          console.log(data);
+          return data;
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      const getTokens = async () => {
+        let tokens = await fetchTokens();
+        let output = "";
+        tokens.forEach((token) => {
+          console.log(`${token.username}`);
+          output += `<div class="token"><div>${token.username}</div><div>${token.email}</div><div>${token.phone}</div></div>`;
+        });
+        container.innerHTML = output;
+      };
+
+      button.addEventListener("click", () => {
+        getTokens();
+      });
+    </script>
+  </body>
+</html>
