@@ -1,0 +1,50 @@
+html {
+  background-color: lightblue;
+}
+
+body {
+  border: 1px solid black;
+  border-radius: 8px;
+  margin: 3% 25%;
+  padding: 24px;
+  background-color: white;
+}
+
+h1 {
+  text-align: center;
+}
+
+button {
+  background-color: greenyellow;
+  border: 1px solid black;
+  border-radius: 8px;
+  transition: 0.2s;
+  padding: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: grey;
+  transition: 0.2s;
+}
+
+button a {
+  color: black;
+  text-decoration: none;
+}
+
+.tokenHolder {
+  margin: 3% auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.token {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid black;
+  text-align: center;
+}

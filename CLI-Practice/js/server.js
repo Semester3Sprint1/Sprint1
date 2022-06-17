@@ -12,10 +12,20 @@ const server = http.createServer((req, res) => {
       path += "index.html";
       routes.displayFile(path, res, "Home");
       break;
+    case "/style":
+      res.statusCode = 200;
+      path = "./css/style.css";
+      routes.displayFile(path, res, "CSS");
+      break;
     case "/config":
       res.statusCode = 200;
       path = "./config.json";
       routes.displayFile(path, res, "Config");
+      break;
+    case "/token":
+      res.statusCode = 200;
+      path += "token.html";
+      routes.displayFile(path, res, "Token");
       break;
     case "/tokens":
       res.statusCode = 200;
