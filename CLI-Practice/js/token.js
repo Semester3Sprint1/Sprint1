@@ -4,6 +4,8 @@ const crc32 = require("crc/crc32");
 const fs = require("fs");
 const path = require("path");
 const { defaultToken } = require("./templates");
+const tokenPath = path.join(__dirname, "..", "tokens.json");
+const prompt = require("prompt-sync")({ sigint: true });
 
 function addDays(date, days) {
   var result = new Date(date);
@@ -28,18 +30,21 @@ const tokenApp = () => {
       searchToken(myArgs[2], myArgs[3]);
       break;
     default:
-      fs.readFile(path.join(__dirname, "views", "token.txt"), (error, data) => {
-        if (error) throw error;
-        else {
-          DEBUG && console.log("default accessed - display help file");
-          console.log(data.toString());
+      fs.readFile(
+        path.join(__dirname, "..", "views", "token.txt"),
+        (error, data) => {
+          if (error) throw error;
+          else {
+            DEBUG && console.log("default accessed - display help file");
+            console.log(data.toString());
+          }
         }
-      });
+      );
   }
 };
 
 const searchToken = (arg, element) => {
-  fs.readFile(path.join(__dirname, "tokens.json"), (error, data) => {
+  fs.readFile(tokenPath, (error, data) => {
     if (error) throw error;
     // if (DEBUG) console.log(JSON.parse(data));
     let tokens = JSON.parse(data);
@@ -69,7 +74,7 @@ const searchToken = (arg, element) => {
 };
 
 const countTokens = () => {
-  fs.readFile(path.join(__dirname, "tokens.json"), (error, data) => {
+  fs.readFile(tokenPath, (error, data) => {
     if (error) throw error;
     if (DEBUG) console.log("Counting tokens");
     let tokens = JSON.parse(data);
@@ -81,7 +86,7 @@ const countTokens = () => {
 const editDetail = (arg, username, element) => {
   DEBUG && console.log("--- SET PHONE NUMBER ---");
   let match = false;
-  fs.readFile(path.join(__dirname, "tokens.json"), (error, data) => {
+  fs.readFile(tokenPath, (error, data) => {
     if (error) throw error;
     // if (DEBUG) console.log(JSON.parse(data));
     let tokens = JSON.parse(data);
@@ -107,7 +112,7 @@ const editDetail = (arg, username, element) => {
     }
 
     data = JSON.stringify(tokens, null, 2);
-    fs.writeFile("tokens.json", data, (error) => {
+    fs.writeFile(tokenPath, data, (error) => {
       if (error) throw error;
       DEBUG && console.log("Changed tokens.json file to reflect updates");
     });
@@ -119,22 +124,6 @@ const newToken = (username) => {
 
   let now = new Date();
   let expires = addDays(now, 3);
-
-  // Check to see if token file exists, if not create default
-  try {
-    let tokenData = JSON.stringify(defaultToken, null, 2);
-    if (!fs.existsSync(path.join(__dirname, "tokens.json"))) {
-      fs.writeFile("tokens.json", tokenData, (err) => {
-        if (err) throw err;
-        DEBUG && console.log("Created default token file");
-      });
-    } else {
-      DEBUG &&
-        console.log("Tokens file already exists - no need to create again");
-    }
-  } catch (error) {
-    console.log(error);
-  }
 
   // Create default newToken object, we will modify this and save it to the file
   let newToken = JSON.parse(`{
@@ -149,25 +138,29 @@ const newToken = (username) => {
 
   newToken.created = now.toLocaleDateString();
   newToken.username = username;
+  newToken.email = prompt("Enter your email: ");
+  newToken.phone = prompt("Enter your phone number: ");
   newToken.token = crc;
   newToken.expires = expires.toLocaleDateString();
 
-  let userTokens = fs.readFileSync("tokens.json", "utf-8"); // Scan file, save list of users to this variable
+  let userTokens = fs.readFileSync(tokenPath, "utf-8"); // Scan file, save list of users to this variable
+  let tokens = JSON.parse(userTokens);
+  tokens.push(newToken);
+  userTokens = JSON.stringify(tokens, null, 2);
 
   // This stuff is unnecessary ------------
-  // let tokens = JSON.parse(userTokens);
+
   // console.log(tokens);
-  // tokens.push(newToken);
   // console.log("AS JSON:");
   // console.log(tokens);
-  // userTokens = JSON.stringify(tokens, null, 2);
   // console.log("AS STRING:");
   // console.log(userTokens);
   // -----------------------------------------
 
   // Read tokens.json file and replace existing list with new list
-  fs.writeFile("tokens.json", userTokens, (err) => {
+  fs.writeFile(tokenPath, userTokens, (err) => {
     if (err) throw err;
+    DEBUG && console.log(userTokens);
     DEBUG && console.log("Updated token file");
   });
 };

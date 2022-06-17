@@ -6,6 +6,7 @@ Usage:
 app init --all          creates the folder structure and config file
 app init --mk           creates the folder structure and add usage files
 app init --cat          creates the config file with default settings
+app init --tok          creates the token file
 `;
 
 let configText = `
@@ -39,17 +40,19 @@ const configJson = {
   superuser: "adm1n",
 };
 
-let defaultToken = [
-  {
-    created: "1969-01-31 12:30:00",
-    username: "username",
-    email: "user@example.com",
-    phone: "7096548900",
-    token: "token",
-    expires: "1969-02-03 12:30:00",
-    confirmed: "tbd",
-  },
-];
+// let defaultToken = [
+//   {
+//     created: "1969-01-31 12:30:00",
+//     username: "username",
+//     email: "user@example.com",
+//     phone: "7096548900",
+//     token: "token",
+//     expires: "1969-02-03 12:30:00",
+//     confirmed: "tbd",
+//   },
+// ];
+
+let defaultToken = [];
 
 module.exports = {
   initText,
