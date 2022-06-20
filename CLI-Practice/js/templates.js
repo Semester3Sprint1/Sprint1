@@ -16,7 +16,7 @@ Usage:
 
 app config --show                     displays a list of the current config settings
 app config --reset                    resets the config file with default settings
-app config --set                      sets a specific config setting
+app config --set <attribute> <value>  sets a specific config setting
 app config --add <attribute> <value>  adds an attribute to the config file
 `;
 
@@ -32,7 +32,8 @@ app token --add e <username> <email>
 app token --search u <username>       fetches a token for a given username
 app token --search e <email>          fetches a token for a given email
 app token --search p <phone>          fetches a token for a given phone number
-app token --expired                   checks for expired tokens`;
+app token --expired                   checks for expired tokens
+app token --login <username>          attempts to log a user in - checks their token as they do so`;
 
 const configJson = {
   name: "AppConfigCLI",

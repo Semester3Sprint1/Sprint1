@@ -41,6 +41,8 @@ const initApp = () => {
         console.log("Initialization complete.");
       }, 1000);
       break;
+    case "help":
+    case "h":
     default:
       fs.readFile(
         path.join(__dirname, "..", "views", "init.txt"),

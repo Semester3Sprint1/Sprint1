@@ -46,7 +46,7 @@ const logTraffic = async (location, res) => {
 
 const logCommand = async (level, event, message) => {
   const dateTime = `${format(new Date(), "yyyy-MM-dd   HH:mm:ss")}`;
-  const logItem = `${dateTime}\t${level}\t${event}\t${message}\t${uuid()}\n`;
+  const logItem = `${dateTime}\t${level}\t\t${event}\t\t${message}\t\t${uuid()}\n`;
   DEBUG && console.log(logItem);
   try {
     if (!fs.existsSync(path.join(__dirname, "..", "logs"))) {

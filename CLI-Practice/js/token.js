@@ -35,6 +35,8 @@ const tokenApp = () => {
     case "--login":
       login(myArgs[2]);
       break;
+    case "help":
+    case "h":
     default:
       fs.readFile(
         path.join(__dirname, "..", "views", "token.txt"),
@@ -221,7 +223,7 @@ const login = (username, token) => {
 
     tokens.forEach((token) => {
       if (token.username === username) {
-        console.log("Step 1 complete - user found");
+        DEBUG && console.log("Step 1 complete - user found");
         match = true;
         if (!checkDays(token.expires)) {
           console.log(`Token valid. Login complete. Welcome, ${username}.`);

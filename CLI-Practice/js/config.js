@@ -26,6 +26,8 @@ const configApp = () => {
       DEBUG && console.log("--add accessed");
       addConfig(myArgs[2], myArgs[3]);
       break;
+    case "help":
+    case "h":
     default:
       fs.readFile(
         path.join(__dirname, "..", "views", "config.txt"),
