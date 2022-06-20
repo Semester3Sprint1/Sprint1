@@ -3,7 +3,8 @@ const { configApp } = require("./js/config");
 const { initApp } = require("./js/init");
 const { tokenApp } = require("./js/token");
 const { runServer } = require("./js/server");
-global.DEBUG = true;
+const { myEmitter } = require("./js/events");
+global.DEBUG = false;
 const myArgs = process.argv.slice(2);
 
 const myApp = () => {

@@ -1,3 +1,4 @@
+/* General */
 html {
   background-color: lightblue;
 }
@@ -10,10 +11,15 @@ body {
   background-color: white;
 }
 
-h1 {
+h1,
+h2,
+h3 {
   text-align: center;
 }
 
+/* ---- TOKEN PAGE --- */
+
+/* Token Display Area */
 .tokenHolder {
   margin: 3% auto;
   display: grid;
@@ -30,12 +36,24 @@ h1 {
   gap: 8px;
 }
 
+.valid {
+  background-color: green;
+  color: white;
+}
+
+.invalid {
+  background-color: red;
+  color: white;
+}
+
 .token div {
   display: flex;
   justify-content: space-between;
 }
 
-#summonToken {
+/* Show/Hide Button */
+.summonToken,
+.hideToken {
   text-align: center;
   margin: auto 12.5%;
   width: 75%;
@@ -48,39 +66,36 @@ h1 {
   cursor: pointer;
 }
 
-#home {
-  text-align: center;
-  margin: auto;
-  width: 75%;
-  font-weight: 700;
-  background-color: lightseagreen;
-  border: 1px solid black;
-  border-radius: 8px;
-  transition: 0.2s;
-  padding: 8px;
-  cursor: pointer;
-}
-
-#summonToken:hover,
-#home:hover {
+.summonToken:hover,
+.hideToken:hover {
   background-color: grey;
   transition: 0.2s;
 }
 
-#summonToken a,
-#home {
+.summonToken a,
+.hideToken {
   color: black;
   text-decoration: none;
 }
 
-#newToken {
-  display: grid;
+/* New Token Form */
+#form {
   margin: 3% auto;
   border: 1px solid black;
+  background-color: bisque;
+}
+
+#form h3 {
+  font-size: 2em;
+  margin: 1% auto auto auto;
+}
+
+#newToken {
+  display: grid;
   padding: 2em;
   grid-template-columns: 1fr 2fr;
   gap: 24px;
-  background-color: bisque;
+  align-items: center;
 }
 
 #newToken label {
@@ -97,4 +112,20 @@ h1 {
 #newToken input:hover {
   background-color: lightgrey;
   transition: ease-in-out 0.2s;
+}
+
+#tokenSubmit {
+  padding: 12px;
+  cursor: pointer;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  border-radius: 8px;
+  transition: 0.2s ease-in-out;
+}
+
+#tokenSubmit:hover {
+  background-color: grey;
+  color: white;
+  transition: 0.2s ease-in-out;
 }
