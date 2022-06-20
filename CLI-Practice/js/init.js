@@ -8,6 +8,7 @@ const {
   tokenText,
   defaultToken,
 } = require("./templates");
+const { myEmitter } = require("./events");
 
 const myArgs = process.argv.slice(2);
 
@@ -24,18 +25,21 @@ const initApp = () => {
         );
       createConfig();
       break;
-    case "--tok":
-      DEBUG && console.log("--tok accessed - creates the token file");
+    case "--tkn":
+      DEBUG && console.log("--tkn accessed - creates the token file");
       createToken();
       break;
     case "--all":
       DEBUG &&
         console.log(
-          "--cat accessed - creates the folder structure and config file"
+          "--all accessed - creates init files, config file and directory, & token files"
         );
       createInit();
       createConfig();
       createToken();
+      setTimeout(() => {
+        console.log("Initialization complete.");
+      }, 1000);
       break;
     default:
       fs.readFile(
@@ -61,7 +65,12 @@ const createToken = () => {
         tokenData,
         (err) => {
           if (err) throw err;
-          DEBUG && console.log("Created default token file");
+          myEmitter.emit(
+            "cmd",
+            "init.createToken()",
+            "INFO",
+            "Created token file"
+          );
         }
       );
     } else {
@@ -82,7 +91,7 @@ const createInit = () => {
     // If the directory doesn't exist, create it first, then create the files
     fs.mkdir(path.join(__dirname, "..", "views"), (err) => {
       if (err) throw err;
-      else if (DEBUG) console.log("Directory created");
+      else if (DEBUG) console.log("View directory created");
     });
     createHelpFiles();
   }
@@ -113,15 +122,22 @@ const createHelpFiles = () => {
       else if (DEBUG) console.log("Data written to token.txt file");
     }
   );
+  myEmitter.emit("cmd", "init.createInit()", "INFO", "Create help files");
 };
 
 const createConfig = () => {
   try {
     let data = JSON.stringify(configJson, null, 2);
     if (!fs.existsSync(path.join(__dirname, "..", "config.json"))) {
-      fs.writeFile("../config.json", data, (err) => {
+      fs.writeFile(path.join(__dirname, "..", "config.json"), data, (err) => {
         if (err) throw err;
-        else if (DEBUG) console.log("Config.json file created");
+        else
+          myEmitter.emit(
+            "cmd",
+            "init.createConfig()",
+            "INFO",
+            "Created config file"
+          );
       });
     } else {
       if (DEBUG) console.log("Config file already exists");

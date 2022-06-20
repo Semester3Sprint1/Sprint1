@@ -6,7 +6,7 @@ Usage:
 app init --all          creates the folder structure and config file
 app init --mk           creates the folder structure and add usage files
 app init --cat          creates the config file with default settings
-app init --tok          creates the token file
+app init --tkn          creates the token file
 `;
 
 let configText = `
@@ -14,9 +14,10 @@ app config <command>
 
 Usage:
 
-app config --show             displays a list of the current config settings
-app config --reset            resets the config file with default settings
-app config --set              sets a specific config setting
+app config --show                     displays a list of the current config settings
+app config --reset                    resets the config file with default settings
+app config --set                      sets a specific config setting
+app config --add <attribute> <value>  adds an attribute to the config file
 `;
 
 let tokenText = `
@@ -24,13 +25,14 @@ app config <command>
 
 Usage:
 
-app token --count             displays a count of the tokens created
-app token --new <username>    generates a token for a given username, saves tokens to the json file
+app token --count                     displays a count of the tokens created
+app token --new <username>            generates a token for a given username, saves tokens to the json file
 app token --add p <username> <phone>
 app token --add e <username> <email>
-app token --search u <username>  fetches a token for a given username
-app token --search e <email>  fetches a token for a given email
-app token --search p <phone>  fetches a token for a given phone number`;
+app token --search u <username>       fetches a token for a given username
+app token --search e <email>          fetches a token for a given email
+app token --search p <phone>          fetches a token for a given phone number
+app token --expired                   checks for expired tokens`;
 
 const configJson = {
   name: "AppConfigCLI",
