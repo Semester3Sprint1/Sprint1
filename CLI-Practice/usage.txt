@@ -1,6 +1,7 @@
 
 Welcome to the user profile app! The purpose of this application is to keep track of different user accounts and their associated tokens.
-This can be done either through the Command Line Interface, or through the HTTP server (see below).
+This can be done either through the Command Line Interface, or through the HTTP server (see below). 
+To begin, run the 'node app init --all' command to initialize all necessary files and folders
 
 node app <command>
 

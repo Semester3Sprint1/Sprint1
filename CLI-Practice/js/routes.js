@@ -3,7 +3,7 @@ const path = require("path");
 const { myEmitter } = require("./events");
 
 // This file can be used to display more than simply html files - we could also display images or other data this way
-const displayFile = (filePath, res, location) => {
+const displayFile = (filePath, res, location, token = "") => {
   if (res.statusCode == 410) {
     var filePath = "../html/410.html";
     var location = "404";
@@ -13,7 +13,7 @@ const displayFile = (filePath, res, location) => {
     if (err) {
       console.log(err);
     } else {
-      if (location !== "Home") {
+      if (location !== "Home" || location !== "CSS") {
         // This will serve as our "console.log()" for each switch, so we know it is working corrently - we don't need this to fire off every time someone goes home
         myEmitter.emit("pageVisit", location, res);
       }
@@ -38,6 +38,10 @@ const displayFile = (filePath, res, location) => {
           var content = "text/html";
           break;
       }
+      // if (token !== "") {
+      //   console.log("set cookie!");
+      //   res.setHeader("Set-cookie", `token=${token}`);
+      // }
       // res.setHeader("Set-cookie", `${location}Visit=True`);
       res.writeHead(res.statusCode, { "Content-Type": content });
       res.write(data);
@@ -45,9 +49,5 @@ const displayFile = (filePath, res, location) => {
     }
   });
 };
-
-// const displayCSS = (filePath, res) => {
-//   // Loads a css file onto the server
-// };
 
 module.exports = { displayFile };

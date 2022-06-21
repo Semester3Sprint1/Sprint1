@@ -26,9 +26,15 @@ const logTraffic = async (location, res) => {
   }
 
   if (location !== "CSS") {
-    const trafficItem = `${dateTime} \t ${
-      res.statusCode
-    } - ${status} \t ${location} page visited \t ${uuid()}\n`;
+    if (location === "Tokens") {
+      var trafficItem = `${dateTime} \t ${
+        res.statusCode
+      } - ${status} \t ${location} file accessed \t ${uuid()}\n`;
+    } else {
+      var trafficItem = `${dateTime} \t ${
+        res.statusCode
+      } - ${status} \t ${location} page visited \t ${uuid()}\n`;
+    }
     DEBUG && console.log(trafficItem);
     try {
       if (!fs.existsSync(path.join(__dirname, "..", "logs"))) {
