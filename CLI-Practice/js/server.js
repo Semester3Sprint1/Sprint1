@@ -4,6 +4,7 @@ const routes = require("./routes");
 // const { myEmitter } = require("./events");
 const { newToken } = require("./token");
 const startTime = new Date();
+const crc32 = require("crc/crc32");
 
 const server = http.createServer((req, res) => {
   var path = "./html/";
@@ -15,7 +16,7 @@ const server = http.createServer((req, res) => {
   switch (req.url) {
     case "/":
       res.statusCode = 200;
-      path += "index.html";
+      path += "token.html";
       routes.displayFile(path, res, "Home");
       break;
     case "/style":
@@ -36,7 +37,7 @@ const server = http.createServer((req, res) => {
     case "/tokens":
       res.statusCode = 200;
       path = "./tokens.json";
-      routes.displayFile(path, res, "CSS");
+      routes.displayFile(path, res, "Tokens");
       break;
     default:
       // In the event of a non-existant page
@@ -65,19 +66,22 @@ const handleToken = (req, res, path) => {
       let pair = keyValuePair.split("=");
 
       // The data comes in in a raw format, these .replace()'s are here to convert some special characters back into the normal format
+      // I'm sure there's a way to convert it into more readable data - will need to look into this
       pair[1] = pair[1]
         .replace("%28", "(")
         .replace("%29", ")")
-        .replace("+", " ");
+        .replace("+", " ")
+        .replace("%E2%80%93", "-");
 
       object = { ...object, [pair[0]]: pair[1] };
     });
     DEBUG && console.log("new token object: ", object);
     newToken(object, "client");
     // Put this here to handle the default path once the post is done
+    var token = crc32(object.username).toString(16);
     res.statusCode = 200;
     path += "token.html";
-    routes.displayFile(path, res, "Token");
+    routes.displayFile(path, res, "Token", token);
   });
 };
 

@@ -4,7 +4,7 @@ const { initApp } = require("./js/init");
 const { tokenApp } = require("./js/token");
 const { runServer } = require("./js/server");
 const { myEmitter } = require("./js/events");
-global.DEBUG = false;
+global.DEBUG = true;
 const myArgs = process.argv.slice(2);
 
 const myApp = () => {

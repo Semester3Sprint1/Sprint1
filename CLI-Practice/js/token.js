@@ -135,6 +135,7 @@ const editDetail = (arg, username, element) => {
 const newToken = (username, location = "") => {
   let now = new Date();
   let expires = addDays(now, 3);
+  if (location === "client") var object = username;
 
   // Create default newToken object, we will modify this and save it to the file
   let newToken = JSON.parse(`{
@@ -147,35 +148,52 @@ const newToken = (username, location = "") => {
     "confirmed": "tbd"
 }`);
 
-  newToken.created = now.toLocaleDateString();
-
-  if (location === "client") {
-    // If the function is coming from the clinet-side, we will run these variables through the function
-    let object = username;
-    newToken.username = object.username;
-    newToken.email = object.email;
-    newToken.phone = object.phone;
-    newToken.token = crc32(object.username).toString(16);
-  } else {
-    // Otherwise, we will prompt the user to enter the values now.
-    newToken.username = username;
-    newToken.email = prompt("Enter your email: ");
-    newToken.phone = prompt("Enter your phone number: ");
-    newToken.token = crc32(username).toString(16);
-  }
-  newToken.expires = expires.toLocaleDateString();
-
   let userTokens = fs.readFileSync(tokenPath, "utf-8"); // Scan file, save list of users to this variable
   let tokens = JSON.parse(userTokens);
-  tokens.push(newToken);
-  userTokens = JSON.stringify(tokens, null, 2);
+  let match = false;
+  if (location === "client") {
+    tokens.forEach((token) => {
+      if (token.username === object.username) {
+        match = true;
+      }
+    });
+  } else {
+    tokens.forEach((token) => {
+      if (token.username === username) {
+        match = true;
+      }
+    });
+  }
 
-  // Read tokens.json file and replace existing list with new list
-  fs.writeFile(tokenPath, userTokens, (err) => {
-    if (err) throw err;
-    DEBUG && console.log(userTokens);
-    myEmitter.emit("cmd", "token.newToken()", "INFO", "Added new token");
-  });
+  if (!match) {
+    if (location === "client") {
+      // If the function is coming from the clinet-side, we will run these variables through the function
+      newToken.username = object.username;
+      newToken.email = object.email;
+      newToken.phone = object.phone;
+      newToken.token = crc32(object.username).toString(16);
+    } else {
+      // Otherwise, we will prompt the user to enter the values now.
+      newToken.username = username;
+      newToken.email = prompt("Enter your email: ");
+      newToken.phone = prompt("Enter your phone number: ");
+      newToken.token = crc32(username).toString(16);
+    }
+    newToken.created = now.toLocaleDateString();
+    newToken.expires = expires.toLocaleDateString();
+
+    tokens.push(newToken);
+    userTokens = JSON.stringify(tokens, null, 2);
+
+    // Read tokens.json file and replace existing list with new list
+    fs.writeFile(tokenPath, userTokens, (err) => {
+      if (err) throw err;
+      DEBUG && console.log(userTokens);
+      myEmitter.emit("cmd", "token.newToken()", "INFO", "Added new token");
+    });
+  } else {
+    console.log("Error - that username already exists. Please choose another.");
+  }
 };
 
 function checkDays(expiry) {
