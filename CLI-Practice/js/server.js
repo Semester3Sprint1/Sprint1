@@ -34,6 +34,11 @@ const server = http.createServer((req, res) => {
       path += "token.html";
       routes.displayFile(path, res, "Token");
       break;
+    case "/about":
+      res.statusCode = 200;
+      path += "about.html";
+      routes.displayFile(path, res, "About");
+      break;
     case "/tokens":
       res.statusCode = 200;
       path = "./tokens.json";

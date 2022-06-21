@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <!-- <link rel="stylesheet" type="text/css" href="http://localhost:3000/style" /> -->
-    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/style" />
+    <!-- <link rel="stylesheet" href="../css/style.css" /> -->
   </head>
   <body>
     <nav>
       <ul>
         <li><a href="http://localhost:3000/">Home</a></li>
-        <li><a href="http://localhost:3000/tokens">Tokens</a></li>
-        <li><a href="http://localhost:3000/config">Config</a></li>
+        <li><a href="http://localhost:3000/tokens">Tokens (JSON)</a></li>
+        <li><a href="http://localhost:3000/config">Config (JSON)</a></li>
         <li><a href="http://localhost:3000/about">About</a></li>
       </ul>
     </nav>
@@ -43,9 +43,8 @@
 
           <label for="phone">Phone Number</label>
           <input type="phone" id="phone" name="phone" />
-          <div>
-            <input id="tokenSubmit" type="submit" value="Submit" />
-          </div>
+
+          <input id="tokenSubmit" type="submit" value="Submit" />
         </form>
       </div>
 
@@ -130,6 +129,7 @@
           }
           output += `<div class="token"><div><span>Username:</span> <span>${token.username}</span></div><div><span>Email:</span> 
             <span>${token.email}</span></div><div><span>Phone:</span> <span>${token.phone}</span></div><div><span>Expiry:</span> <span>${token.expires}</span></div>
+            <div><span>Token ID:</span> <span>${token.token}</span></div>
             <div class=${tokenClass}><span></span>${tokenText}<span></span></div></div>`;
         });
         container.innerHTML = output;
