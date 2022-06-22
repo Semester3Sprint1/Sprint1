@@ -16,7 +16,7 @@
           <li><a href="http://localhost:3000/tokens">Tokens (JSON)</a></li>
           <li><a href="http://localhost:3000/config">Config (JSON)</a></li>
           <li><a href="http://localhost:3000/about">About</a></li>
-          <li><a href="http://localhost:3000/login">User Login</a></li>
+          <li><a href="http://localhost:3000/login">Account Management</a></li>
         </ul>
       </nav>
     </header>
@@ -165,23 +165,27 @@
         showTokens();
       });
 
-      // $("#newToken").on("submit", function (event) {
-      //   event.preventDefault();
-      //   let data = $(this).serialize();
-      //   //make our request here
-      //   $.post("/", function (data) {
-      //     console.log("data: ", data);
-      //   });
-      // });
-      // var form = document.querySelector("#newToken");
-      // form.onSubmit((e) => {
-      //   e.preventDefault();
-      //   let data = new FormData(form);
-      //   for (let [key, value] of data) {
-      //     console.log(key);
-      //     console.log(value);
-      //   }
-      // });
+      let form = document.querySelector("#newToken");
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        console.log("doing the XHR thing");
+        let payload = {};
+        let elements = form.elements;
+        console.log(elements);
+        for (let i = 0; i < elements.length; i++) {
+          if (elements[i].type !== "submit") {
+            payload[elements[i].name] = elements[i].value;
+          }
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        console.log("payload", payload);
+        let payloadString = JSON.stringify(payload);
+        console.log("payload String", payloadString);
+        xhr.send(payloadString);
+      });
     </script>
   </body>
 </html>
