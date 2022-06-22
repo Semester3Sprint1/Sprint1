@@ -1,0 +1,14 @@
+
+app config <command>
+
+Usage:
+
+app token --count                     displays a count of the tokens created
+app token --new <username>            generates a token for a given username, saves tokens to the json file
+app token --add p <username> <phone>
+app token --add e <username> <email>
+app token --search u <username>       fetches a token for a given username
+app token --search e <email>          fetches a token for a given email
+app token --search p <phone>          fetches a token for a given phone number
+app token --expired                   checks for expired tokens
+app token --login <username>          attempts to log a user in - checks their token as they do so
