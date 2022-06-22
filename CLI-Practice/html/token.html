@@ -4,19 +4,22 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Sprint 1 - Full Stack Development</title>
     <link rel="stylesheet" type="text/css" href="http://localhost:3000/style" />
     <!-- <link rel="stylesheet" href="../css/style.css" /> -->
   </head>
   <body>
-    <nav>
-      <ul>
-        <li><a href="http://localhost:3000/">Home</a></li>
-        <li><a href="http://localhost:3000/tokens">Tokens (JSON)</a></li>
-        <li><a href="http://localhost:3000/config">Config (JSON)</a></li>
-        <li><a href="http://localhost:3000/about">About</a></li>
-      </ul>
-    </nav>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="http://localhost:3000/">Home</a></li>
+          <li><a href="http://localhost:3000/tokens">Tokens (JSON)</a></li>
+          <li><a href="http://localhost:3000/config">Config (JSON)</a></li>
+          <li><a href="http://localhost:3000/about">About</a></li>
+          <li><a href="http://localhost:3000/login">User Login</a></li>
+        </ul>
+      </nav>
+    </header>
     <main>
       <h1>Full Stack JavaScript Project</h1>
       <h2>Web Application for Confirming User Accounts</h2>
@@ -88,7 +91,7 @@
         let tokens = await fetchTokens();
         let match = false;
         tokens.forEach((token) => {
-          if (token.username === name.value) {
+          if (token.username.toLowerCase() === name.value.toLowerCase()) {
             match = true;
           }
         });
@@ -127,7 +130,7 @@
             var tokenClass = "valid";
             var tokenText = "Token Valid";
           }
-          output += `<div class="token"><div><span>Username:</span> <span>${token.username}</span></div><div><span>Email:</span> 
+          output += `<div class="token"><div><span>Username:</span> <span>${token.username}</span></div><div><span>Email:</span>
             <span>${token.email}</span></div><div><span>Phone:</span> <span>${token.phone}</span></div><div><span>Expiry:</span> <span>${token.expires}</span></div>
             <div><span>Token ID:</span> <span>${token.token}</span></div>
             <div class=${tokenClass}><span></span>${tokenText}<span></span></div></div>`;
@@ -154,7 +157,7 @@
         var summonButton = document.getElementsByClassName("summonToken")[0];
 
         summonButton.addEventListener("click", () => {
-          getTokens();
+          showTokens();
         });
       };
 

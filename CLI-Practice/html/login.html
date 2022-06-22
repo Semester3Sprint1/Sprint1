@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Login</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/style" />
+    <!-- <link rel="stylesheet" href="../css/style.css" /> -->
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="http://localhost:3000/">Home</a></li>
+          <li><a href="http://localhost:3000/tokens">Tokens (JSON)</a></li>
+          <li><a href="http://localhost:3000/config">Config (JSON)</a></li>
+          <li><a href="http://localhost:3000/about">About</a></li>
+          <li><a href="http://localhost:3000/login">Account Management</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="loginPage">
+      <h1>User Login/Account Confirmation</h1>
+      <form
+        action="http://localhost:3000/login"
+        method="post"
+        id="login"
+        onsubmit=""
+      >
+        <div>
+          <label for="username">Username</label>
+          <input type="text" id="username" />
+        </div>
+        <div>
+          <label for="token">Confirm Token</label>
+          <input type="password" id="token" />
+        </div>
+        <!-- <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" />
+        </div> -->
+        <div>
+          <br />
+          <input type="submit" value="Confirm Token!" id="loginSubmit" />
+        </div>
+      </form>
+    </main>
+    <script>
+      var theButton = document.querySelector("#loginSubmit");
+      theButton.addEventListener("click", (e) => {
+        confirmToken(e);
+      });
+
+      const confirmToken = async (e) => {
+        // e.preventDefault();
+        var username = document.querySelector("#username");
+        var tokenInput = document.querySelector("#token");
+        var tokens = await fetchTokens();
+
+        var match = validateToken(tokens, username, tokenInput);
+        if (match) {
+          var expired = !checkExpire(tokens, username);
+          if (expired) {
+            alert("Token ID valid, but expired. Please create a new token.");
+          } else {
+            alert("You exist and can be confirmed.");
+            // THIS IS WHERE WE RUN THE CODE TO SEND SHIT TO THE SERVER
+          }
+        } else alert("Invalid username or token. Please try again.");
+      };
+
+      const fetchTokens = async () => {
+        try {
+          const res = await fetch("http://localhost:3000/tokens");
+          const data = await res.json();
+          //   console.log(data);
+          return data;
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      const validateToken = (tokens, username, tokenInput) => {
+        var match = false;
+        tokens.forEach((token) => {
+          if (token.username.toLowerCase() === username.value.toLowerCase()) {
+            if (token.token === tokenInput.value) {
+              match = true;
+            }
+          }
+        });
+        return match;
+      };
+
+      const checkExpire = (tokens, username) => {
+        var expired = false;
+        tokens.forEach((token) => {
+          if (token.username.toLowerCase() === username.value.toLowerCase()) {
+            var expired = checkDays(token.expires);
+          }
+        });
+        return expired;
+      };
+
+      function checkDays(expiry) {
+        let now = new Date().getDate();
+        var expire = new Date(expiry).getDate() + 1; // The + 1 is used here because the expiry date was rounding down
+        if (expire < now) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      //   $("#login").on("submit", function (event) {
+      //     event.preventDefault();
+      //     let data = $(this).serialize();
+      //     //make our request here
+      //     $.post("/login", function (data) {
+      //       console.log("data: ", data);
+      //     });
+      //   });
+    </script>
+  </body>
+</html>

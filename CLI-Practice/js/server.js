@@ -24,6 +24,11 @@ const server = http.createServer((req, res) => {
       path = "./css/style.css";
       routes.displayFile(path, res, "CSS");
       break;
+    case "/login":
+      res.statusCode = 200;
+      path += "login.html";
+      routes.displayFile(path, res, "Login");
+      break;
     case "/config":
       res.statusCode = 200;
       path = "./config.json";
@@ -84,9 +89,9 @@ const handleToken = (req, res, path) => {
     newToken(object, "client");
     // Put this here to handle the default path once the post is done
     var token = crc32(object.username).toString(16);
-    res.statusCode = 200;
-    path += "token.html";
-    routes.displayFile(path, res, "Token", token);
+    // res.statusCode = 200;
+    // path += "token.html";
+    // routes.displayFile(path, res, "Token", token);
   });
 };
 
