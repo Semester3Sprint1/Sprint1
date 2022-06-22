@@ -196,6 +196,30 @@ const newToken = (username, location = "") => {
   }
 };
 
+const confirmToken = (userToken) => {
+  let userTokens = fs.readFileSync(tokenPath, "utf-8"); // Scan file, save list of users to this variable
+  let tokens = JSON.parse(userTokens);
+  let match = false;
+  tokens.forEach((token) => {
+    if (token.username === userToken.username) {
+      if (token.token === userToken.tokenID) {
+        token.confirmed = true;
+        match = true;
+      } else console.log("Invalid TokenID");
+    }
+  });
+  userTokens = JSON.stringify(tokens, null, 2);
+
+  if (match) {
+    // Read tokens.json file and replace existing list with new list
+    fs.writeFile(tokenPath, userTokens, (err) => {
+      if (err) throw err;
+      DEBUG && console.log(userTokens);
+      myEmitter.emit("cmd", "token.newToken()", "INFO", "Added new token");
+    });
+  }
+};
+
 function checkDays(expiry) {
   let now = new Date().getDate();
   var expire = new Date(expiry).getDate() + 1; // The + 1 is used here because the expiry date was rounding down
@@ -275,4 +299,4 @@ const login = (username, token) => {
   });
 };
 
-module.exports = { tokenApp, newToken, checkDays };
+module.exports = { tokenApp, newToken, checkDays, confirmToken };

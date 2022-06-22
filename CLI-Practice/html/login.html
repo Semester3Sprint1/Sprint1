@@ -30,11 +30,11 @@
       >
         <div>
           <label for="username">Username</label>
-          <input type="text" id="username" />
+          <input type="text" id="username" name="username" />
         </div>
         <div>
           <label for="token">Confirm Token</label>
-          <input type="password" id="token" />
+          <input type="password" id="token" name="tokenID" />
         </div>
         <!-- <div>
           <label for="password">Password</label>
@@ -48,26 +48,35 @@
     </main>
     <script>
       var theButton = document.querySelector("#loginSubmit");
-      theButton.addEventListener("click", (e) => {
-        confirmToken(e);
-      });
+      let form = document.querySelector("#login");
 
-      const confirmToken = async (e) => {
+      //theButton.addEventListener("click", (e) => {
+      //     confirmToken(e);
+      //   });
+
+      const confirmToken = async () => {
         // e.preventDefault();
+        console.log("Running .confirmToken()");
         var username = document.querySelector("#username");
         var tokenInput = document.querySelector("#token");
         var tokens = await fetchTokens();
 
         var match = validateToken(tokens, username, tokenInput);
         if (match) {
-          var expired = !checkExpire(tokens, username);
+          var expired = checkExpire(tokens, username);
+          console.log(expired);
           if (expired) {
             alert("Token ID valid, but expired. Please create a new token.");
+            return false;
           } else {
             alert("You exist and can be confirmed.");
+            return true;
             // THIS IS WHERE WE RUN THE CODE TO SEND SHIT TO THE SERVER
           }
-        } else alert("Invalid username or token. Please try again.");
+        } else {
+          alert("Invalid username or token. Please try again.");
+          return false;
+        }
       };
 
       const fetchTokens = async () => {
@@ -113,14 +122,29 @@
         }
       }
 
-      //   $("#login").on("submit", function (event) {
-      //     event.preventDefault();
-      //     let data = $(this).serialize();
-      //     //make our request here
-      //     $.post("/login", function (data) {
-      //       console.log("data: ", data);
-      //     });
-      //   });
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        // let confirmed = await confirmToken();
+        // let confirmed = true;
+        if (confirmed) {
+          console.log("doing the XHR thing");
+          let payload = {};
+          let elements = form.elements;
+          console.log(elements);
+          for (let i = 0; i < elements.length; i++) {
+            if (elements[i].type !== "submit") {
+              payload[elements[i].name] = elements[i].value;
+            }
+          }
+          let xhr = new XMLHttpRequest();
+          xhr.open("POST", "/");
+          xhr.setRequestHeader("Content-Type", "application/json");
+          console.log("payload", payload);
+          let payloadString = JSON.stringify(payload);
+          console.log("payload String", payloadString);
+          xhr.send(payloadString);
+        }
+      });
     </script>
   </body>
 </html>

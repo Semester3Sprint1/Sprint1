@@ -2,17 +2,18 @@ const http = require("http");
 const port = 3000;
 const routes = require("./routes");
 // const { myEmitter } = require("./events");
-const { newToken } = require("./token");
+const { newToken, confirmToken } = require("./token");
 const startTime = new Date();
 const crc32 = require("crc/crc32");
+const StringDecoder = require("string_decoder").StringDecoder;
 
 const server = http.createServer((req, res) => {
   var path = "./html/";
 
-  // This code runs if the client makes a POST request (which they will if they fill out the "new token" form)
   if (req.method == "POST") {
-    handleToken(req, res, path);
+    handleXHR(req);
   }
+  // This code runs if the client makes a POST request (which they will if they fill out the "new token" form)
   switch (req.url) {
     case "/":
       res.statusCode = 200;
@@ -63,35 +64,27 @@ const runServer = () => {
   console.log(`Server listening on port ${port}, press CTRL + C to cancel...`);
 };
 
-const handleToken = (req, res, path) => {
+const handleXHR = (req) => {
   DEBUG && console.log("POST");
-  var body = "";
-  req.on("data", function (data) {
-    body += data;
-    DEBUG && console.log("Partial body: " + body);
-    var split = body.replace("%40", "@").split("&");
+  let buffer = "";
+  let decoder = new StringDecoder();
 
-    var object = new Object();
-    split.forEach((keyValuePair) => {
-      let pair = keyValuePair.split("=");
+  req.on("data", (data) => {
+    console.log(data);
+    buffer += decoder.write(data);
+    console.log(buffer);
+  });
+  req.on("end", () => {
+    buffer += decoder.end();
+    usableData = JSON.parse(buffer);
+    console.log("usable data:", usableData);
 
-      // The data comes in in a raw format, these .replace()'s are here to convert some special characters back into the normal format
-      // I'm sure there's a way to convert it into more readable data - will need to look into this
-      pair[1] = pair[1]
-        .replace("%28", "(")
-        .replace("%29", ")")
-        .replace("+", " ")
-        .replace("%E2%80%93", "-");
-
-      object = { ...object, [pair[0]]: pair[1] };
-    });
-    DEBUG && console.log("new token object: ", object);
-    newToken(object, "client");
-    // Put this here to handle the default path once the post is done
-    var token = crc32(object.username).toString(16);
-    // res.statusCode = 200;
-    // path += "token.html";
-    // routes.displayFile(path, res, "Token", token);
+    // Right now, since we only have two uses for this, we can seperate them based on the length of the Object sent. We'll need to change this if we expand further
+    if (Object.keys(usableData).length === 3) {
+      newToken(usableData, "client");
+    } else {
+      confirmToken(usableData);
+    }
   });
 };
 
