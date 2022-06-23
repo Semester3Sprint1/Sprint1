@@ -38,11 +38,7 @@ const displayFile = (filePath, res, location, token = "") => {
           var content = "text/html";
           break;
       }
-      // if (token !== "") {
-      //   console.log("set cookie!");
-      //   res.setHeader("Set-cookie", `token=${token}`);
-      // }
-      // res.setHeader("Set-cookie", `${location}Visit=True`);
+
       res.writeHead(res.statusCode, { "Content-Type": content });
       res.write(data);
       res.end();

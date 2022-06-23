@@ -17,6 +17,9 @@ const initApp = () => {
     case "--mk":
       DEBUG && console.log("--mk accessed - create init file and directory");
       createInit();
+      setTimeout(() => {
+        console.log("Initialization complete.");
+      }, 1000);
       break;
     case "--cat":
       DEBUG &&
@@ -24,10 +27,16 @@ const initApp = () => {
           "--cat accessed - creates the config file with default settings"
         );
       createConfig();
+      setTimeout(() => {
+        console.log("Initialization complete.");
+      }, 1000);
       break;
     case "--tkn":
       DEBUG && console.log("--tkn accessed - creates the token file");
       createToken();
+      setTimeout(() => {
+        console.log("Initialization complete.");
+      }, 1000);
       break;
     case "--all":
       DEBUG &&

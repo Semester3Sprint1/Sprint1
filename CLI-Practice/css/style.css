@@ -140,7 +140,7 @@ nav ul li a {
 
 #newToken input {
   border-radius: 8px;
-  /* height: 2em; */
+  height: 2em;
   transition: ease-in-out 0.2s;
 }
 
@@ -170,6 +170,7 @@ nav ul li a {
   transition: 0.2s ease-in-out;
 }
 
+/* ---- LOGIN PAGE --- */
 /* Login Form */
 
 #loginPage {

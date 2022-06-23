@@ -5,8 +5,6 @@ const fs = require("fs");
 const fsPromises = require("fs").promises;
 const path = require("path");
 
-// var visitCount = 0;
-
 const logTraffic = async (location, res) => {
   const dateTime = `${format(new Date(), "yyyy-MM-dd   HH:mm:ss")}`;
 
