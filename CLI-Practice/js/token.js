@@ -20,20 +20,21 @@ const tokenApp = () => {
     case "--new":
       newToken(myArgs[2]);
       break;
+    case "--show":
+      showTokens(myArgs[2]);
+      break;
+    case "--search":
+      searchToken(myArgs[2], myArgs[3]);
+      break;
     case "--edit":
       editDetail(myArgs[2], myArgs[3]);
       break;
     case "--count":
       countTokens();
       break;
-    case "--search":
-      searchToken(myArgs[2], myArgs[3]);
-      break;
+
     case "--login":
       login(myArgs[2], myArgs[3]);
-      break;
-    case "--show":
-      showTokens(myArgs[2]);
       break;
     case "help":
     case "h":
@@ -51,133 +52,7 @@ const tokenApp = () => {
   }
 };
 
-const showTokens = (arg) => {
-  if (arg === "confirmed") {
-    showConfirmedTokens();
-  } else if (arg === "expired") {
-    checkExpire();
-  } else {
-    myEmitter.emit("cmd", "token.showToken()", "INFO", "Display tokens file");
-    fs.readFile(path.join(__dirname, "..", "tokens.json"), (error, data) => {
-      if (error) throw error;
-      else {
-        DEBUG && console.log("display current tokens");
-        console.log(JSON.parse(data));
-      }
-    });
-  }
-};
-
-const searchToken = (arg, element) => {
-  fs.readFile(tokenPath, (error, data) => {
-    if (error) throw error;
-    let tokens = JSON.parse(data);
-    let match = false;
-    myEmitter.emit("cmd", "token.searchToken()", "INFO", "Searched for token");
-
-    tokens.forEach((token) => {
-      if (arg === "u") {
-        var searchTarget = token.username;
-      } else if (arg === "e") {
-        var searchTarget = token.email;
-      } else if (arg === "p") {
-        var searchTarget = token.phone;
-      } else {
-        console.log("Invalid entry. Please search by either 'u', 'e', or 'p'.");
-      }
-      if (searchTarget.toLowerCase() === element.toLowerCase()) {
-        // Check for the argument here - it will determine which field of the token will be changed
-        console.log(token);
-        match = true;
-      }
-    });
-
-    if (!match) {
-      console.log(`Error. ${element} not found. Please try another.`);
-    }
-  });
-};
-
-const countTokens = () => {
-  fs.readFile(tokenPath, (error, data) => {
-    if (error) throw error;
-    myEmitter.emit("cmd", "token.countToken()", "INFO", "Counted tokens");
-    let tokens = JSON.parse(data);
-    let tokenCount = tokens.length;
-    console.log(`Number of tokens: ${tokenCount}`);
-  });
-};
-
-const showConfirmedTokens = () => {
-  fs.readFile(tokenPath, (error, data) => {
-    if (error) throw error;
-    myEmitter.emit(
-      "cmd",
-      "token.showConfirmedTokens()",
-      "INFO",
-      "Showed tokens that have been confirmed by user"
-    );
-    let tokens = JSON.parse(data);
-    tokens.forEach((token) => {
-      if (token.confirmed === true) {
-        console.log(token);
-      }
-    });
-    console.log("\nCheck complete.");
-  });
-};
-
-const editDetail = (arg, username) => {
-  let match = false;
-  fs.readFile(tokenPath, (error, data) => {
-    if (error) throw error;
-    // if (DEBUG) console.log(JSON.parse(data));
-    let tokens = JSON.parse(data);
-    var valid = false;
-
-    tokens.forEach((token) => {
-      if (token.username === username) {
-        // Check for the argument here - it will determine which field of the token will be changed
-        if (arg === "p") {
-          while (!valid) {
-            token.phone = prompt("Enter your phone number: ");
-            if (newTokenPhone(token.phone)) {
-              valid = true;
-            }
-          }
-        } else if (arg === "e") {
-          while (!valid) {
-            token.email = prompt("Enter your email address: ");
-            if (newTokenEmail(token.email)) {
-              valid = true;
-            }
-          }
-        } else {
-          console.log("Error. Invalid argument entered. Please try again.");
-        }
-        match = true;
-      }
-    });
-
-    if (!match) {
-      console.log(
-        `Error. ${username} is not a valid token. Please try another.`
-      );
-    } else {
-      data = JSON.stringify(tokens, null, 2);
-      fs.writeFile(tokenPath, data, (error) => {
-        if (error) throw error;
-        myEmitter.emit(
-          "cmd",
-          "token.editDetail()",
-          "INFO",
-          "Edited token detail"
-        );
-      });
-    }
-  });
-};
-
+// Functions for creating a new token - used both in the CLI and in the Web Server
 const newToken = (username, location = "") => {
   let now = new Date();
   let expires = addDays(now, 3);
@@ -276,44 +151,42 @@ const newTokenEmail = (email) => {
   }
 };
 
-const confirmToken = (userToken) => {
-  let userTokens = fs.readFileSync(tokenPath, "utf-8"); // Scan file, save list of users to this variable
-  let tokens = JSON.parse(userTokens);
-  let match = false;
-  tokens.forEach((token) => {
-    if (token.username === userToken.username) {
-      if (token.token === userToken.token) {
-        token.confirmed = true;
-        match = true;
-      } else console.log("Invalid TokenID");
-    }
-  });
-  userTokens = JSON.stringify(tokens, null, 2);
-
-  if (match) {
-    // Read tokens.json file and replace existing list with new list
-    fs.writeFile(tokenPath, userTokens, (err) => {
-      if (err) throw err;
-      DEBUG && console.log(userTokens);
-      myEmitter.emit(
-        "cmd",
-        "token.confirmToken()",
-        "INFO",
-        "Token verified by user"
-      );
+// Functions for displaying Tokens - options for all tokens, expired tokens, or confirmed tokens
+const showTokens = (arg) => {
+  if (arg === "confirmed") {
+    showConfirmedTokens();
+  } else if (arg === "expired") {
+    checkExpire();
+  } else {
+    myEmitter.emit("cmd", "token.showToken()", "INFO", "Display tokens file");
+    fs.readFile(path.join(__dirname, "..", "tokens.json"), (error, data) => {
+      if (error) throw error;
+      else {
+        DEBUG && console.log("display current tokens");
+        console.log(JSON.parse(data));
+      }
     });
   }
 };
 
-function checkDays(expiry) {
-  let now = new Date().getDate();
-  var expire = new Date(expiry).getDate() + 1; // The + 1 is used here because the expiry date was rounding down
-  if (expire < now) {
-    return true;
-  } else {
-    return false;
-  }
-}
+const showConfirmedTokens = () => {
+  fs.readFile(tokenPath, (error, data) => {
+    if (error) throw error;
+    myEmitter.emit(
+      "cmd",
+      "token.showConfirmedTokens()",
+      "INFO",
+      "Showed tokens that have been confirmed by user"
+    );
+    let tokens = JSON.parse(data);
+    tokens.forEach((token) => {
+      if (token.confirmed === true) {
+        console.log(token);
+      }
+    });
+    console.log("\nCheck complete.");
+  });
+};
 
 const checkExpire = () => {
   fs.readFile(tokenPath, (error, data) => {
@@ -336,6 +209,111 @@ const checkExpire = () => {
   });
 };
 
+function checkDays(expiry) {
+  let now = new Date().getDate();
+  var expire = new Date(expiry).getDate() + 1; // The + 1 is used here because the expiry date was rounding down
+  if (expire < now) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// Function for searching through Tokens
+const searchToken = (arg, element) => {
+  fs.readFile(tokenPath, (error, data) => {
+    if (error) throw error;
+    let tokens = JSON.parse(data);
+    let match = false;
+    myEmitter.emit("cmd", "token.searchToken()", "INFO", "Searched for token");
+
+    tokens.forEach((token) => {
+      if (arg === "u") {
+        var searchTarget = token.username;
+      } else if (arg === "e") {
+        var searchTarget = token.email;
+      } else if (arg === "p") {
+        var searchTarget = token.phone;
+      } else {
+        console.log("Invalid entry. Please search by either 'u', 'e', or 'p'.");
+      }
+      if (searchTarget.toLowerCase() === element.toLowerCase()) {
+        // Check for the argument here - it will determine which field of the token will be changed
+        console.log(token);
+        match = true;
+      }
+    });
+
+    if (!match) {
+      console.log(`Error. ${element} not found. Please try another.`);
+    }
+  });
+};
+
+//Function for counting the Tokens
+const countTokens = () => {
+  fs.readFile(tokenPath, (error, data) => {
+    if (error) throw error;
+    myEmitter.emit("cmd", "token.countToken()", "INFO", "Counted tokens");
+    let tokens = JSON.parse(data);
+    let tokenCount = tokens.length;
+    console.log(`Number of tokens: ${tokenCount}`);
+  });
+};
+
+// Function for editing the Tokens
+const editDetail = (arg, username) => {
+  let match = false;
+  fs.readFile(tokenPath, (error, data) => {
+    if (error) throw error;
+    // if (DEBUG) console.log(JSON.parse(data));
+    let tokens = JSON.parse(data);
+    var valid = false;
+
+    tokens.forEach((token) => {
+      if (token.username === username) {
+        // Check for the argument here - it will determine which field of the token will be changed
+        if (arg === "p") {
+          while (!valid) {
+            token.phone = prompt("Enter your phone number: ");
+            if (newTokenPhone(token.phone)) {
+              valid = true;
+            }
+          }
+        } else if (arg === "e") {
+          while (!valid) {
+            token.email = prompt("Enter your email address: ");
+            if (newTokenEmail(token.email)) {
+              valid = true;
+            }
+          }
+        } else {
+          console.log("Error. Invalid argument entered. Please try again.");
+        }
+        match = true;
+      }
+    });
+
+    if (!match) {
+      console.log(
+        `Error. ${username} is not a valid token. Please try another.`
+      );
+    } else {
+      data = JSON.stringify(tokens, null, 2);
+      fs.writeFile(tokenPath, data, (error) => {
+        if (error) throw error;
+        myEmitter.emit(
+          "cmd",
+          "token.editDetail()",
+          "INFO",
+          "Edited token detail"
+        );
+      });
+    }
+  });
+};
+
+// Functions for logging a user in - used both in the CLI and the Web Server
 const login = (username, tokenID) => {
   fs.readFile(tokenPath, (error, data) => {
     if (error) throw error;
@@ -383,6 +361,35 @@ const login = (username, tokenID) => {
     });
     loginOutput(updateToken, match, matchID);
   });
+};
+
+const confirmToken = (userToken) => {
+  let userTokens = fs.readFileSync(tokenPath, "utf-8"); // Scan file, save list of users to this variable
+  let tokens = JSON.parse(userTokens);
+  let match = false;
+  tokens.forEach((token) => {
+    if (token.username === userToken.username) {
+      if (token.token === userToken.token) {
+        token.confirmed = true;
+        match = true;
+      } else console.log("Invalid TokenID");
+    }
+  });
+  userTokens = JSON.stringify(tokens, null, 2);
+
+  if (match) {
+    // Read tokens.json file and replace existing list with new list
+    fs.writeFile(tokenPath, userTokens, (err) => {
+      if (err) throw err;
+      DEBUG && console.log(userTokens);
+      myEmitter.emit(
+        "cmd",
+        "token.confirmToken()",
+        "INFO",
+        "Token verified by user"
+      );
+    });
+  }
 };
 
 const loginOutput = (updateToken, match, matchID) => {
