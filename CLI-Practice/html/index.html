@@ -12,14 +12,16 @@
       <nav>
         <ul>
           <li><a href="http://localhost:3000/">Home</a></li>
+          <li><a href="http://localhost:3000/token">Create an Account</a></li>
+          <li>
+            <a href="http://localhost:3000/login">Account Confirmation</a>
+          </li>
           <li><a href="http://localhost:3000/tokens">Tokens (JSON)</a></li>
           <li><a href="http://localhost:3000/config">Config (JSON)</a></li>
-          <li><a href="http://localhost:3000/about">About</a></li>
-          <li><a href="http://localhost:3000/login">Account Management</a></li>
         </ul>
       </nav>
     </header>
-    <main>
+    <main id="about">
       <h1>About the Project</h1>
       <h2>Welcome!</h2>
       <p>
@@ -32,6 +34,20 @@
         pages that I have created. I recommend keeping your developer console
         open during your stay, so that you can keep an eye on how things
         function behind the scenes.
+      </p>
+      <p>
+        Some of the features here don't work <i>entirely</i> as I hoped they
+        would. Without a useState, I wasn't able to clear the forms when
+        submitting their data, for example. But it works well enough for what I
+        needed it to do.
+      </p>
+      <p>
+        I'd recommend starting by going to the
+        <strong>Create an Account</strong> page and creating a new user token
+        for yourself. Once that's finished, copy your token ID to your clipboard
+        and go to the <strong>Account Confirmation</strong> page and confirm
+        your account. You should notice your token update itself once you do
+        this.
       </p>
       <br />
     </main>
