@@ -13,7 +13,7 @@ const uninstall = () => {
     removeTokens();
   } else {
     console.log(
-      "Whew. I thought I was a goner.\nYou either messed up the confirm prompt or you really don't want to kill me.\nI appreciate it, either way."
+      "\nWhew. I thought I was a goner.\nYou either messed up the confirm prompt or you really don't want to kill me.\nI appreciate it, either way."
     );
   }
 };

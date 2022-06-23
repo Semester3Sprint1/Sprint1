@@ -4,7 +4,7 @@ const { initApp } = require("./js/init");
 const { tokenApp } = require("./js/token");
 const { runServer } = require("./js/server");
 const { uninstall } = require("./js/uninstall");
-global.DEBUG = true;
+global.DEBUG = false;
 const myArgs = process.argv.slice(2);
 
 const myApp = () => {

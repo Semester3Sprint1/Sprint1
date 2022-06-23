@@ -13,17 +13,19 @@
       <nav>
         <ul>
           <li><a href="http://localhost:3000/">Home</a></li>
+          <li><a href="http://localhost:3000/token">Create an Account</a></li>
+          <li>
+            <a href="http://localhost:3000/login">Account Confirmation</a>
+          </li>
           <li><a href="http://localhost:3000/tokens">Tokens (JSON)</a></li>
           <li><a href="http://localhost:3000/config">Config (JSON)</a></li>
-          <li><a href="http://localhost:3000/about">About</a></li>
-          <li><a href="http://localhost:3000/login">Account Management</a></li>
         </ul>
       </nav>
     </header>
     <main id="loginPage">
       <h1>User Login/Account Confirmation</h1>
       <form
-        action="http://localhost:3000/login"
+        action="http://localhost:3000/"
         method="post"
         id="login"
         onsubmit=""
@@ -34,7 +36,7 @@
         </div>
         <div>
           <label for="token">Confirm Token</label>
-          <input type="password" id="token" name="tokenID" />
+          <input type="password" id="token" name="token" />
         </div>
         <!-- <div>
           <label for="password">Password</label>

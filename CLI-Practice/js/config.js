@@ -3,8 +3,6 @@ const fsPromise = require("fs").promises;
 const path = require("path");
 const { configJson } = require("./templates");
 const { myEmitter } = require("./events");
-const { ADDRCONFIG } = require("dns");
-// myEmitter.emit('log', 'init.createTokenText()', 'INFO', 'Created token text file.');
 
 const myArgs = process.argv.slice(2);
 
@@ -40,41 +38,6 @@ const configApp = () => {
         }
       );
   }
-};
-
-const addConfig = (attribute, value) => {
-  let match = false;
-  fs.readFile(path.join(__dirname, "..", "config.json"), (error, data) => {
-    if (error) throw error;
-    if (DEBUG) console.log(`Config file before change:\n`, JSON.parse(data));
-    let config = JSON.parse(data);
-    for (let key of Object.keys(config)) {
-      if (key === attribute) {
-        match = true;
-      }
-    }
-    if (match) {
-      console.log(
-        `${attribute} is already stored in the config file. Please choose another.`
-      );
-      console.log();
-    } else {
-      config = { ...config, [attribute]: value };
-      data = JSON.stringify(config, null, 2);
-      fs.writeFile(path.join(__dirname, "..", "config.json"), data, (error) => {
-        if (error) throw error;
-        DEBUG &&
-          console.log("Changed config.json file to include new attribute");
-        DEBUG && console.log(`Config file after change:\n`, JSON.parse(data));
-      });
-      myEmitter.emit(
-        "cmd",
-        "config.addConfig()",
-        "ADD CONFIG",
-        "Attribute added to config file"
-      );
-    }
-  });
 };
 
 const displayConfig = () => {
@@ -127,6 +90,7 @@ const setConfig = () => {
         "SET CONFIG",
         "Changes made to config file"
       );
+      console.log("Config file updated.");
     }
   });
 };
@@ -136,6 +100,43 @@ const resetConfig = () => {
   fs.writeFile(path.join(__dirname, "..", "config.json"), configData, (err) => {
     if (err) throw err;
     else myEmitter.emit("cmd", "config.resetConfig()", "INFO", "Reset config");
+  });
+  console.log("Config file reset to default values.");
+};
+
+const addConfig = (attribute, value) => {
+  let match = false;
+  fs.readFile(path.join(__dirname, "..", "config.json"), (error, data) => {
+    if (error) throw error;
+    if (DEBUG) console.log(`Config file before change:\n`, JSON.parse(data));
+    let config = JSON.parse(data);
+    for (let key of Object.keys(config)) {
+      if (key === attribute) {
+        match = true;
+      }
+    }
+    if (match) {
+      console.log(
+        `${attribute} is already stored in the config file. Please choose another.`
+      );
+      console.log();
+    } else {
+      config = { ...config, [attribute]: value };
+      data = JSON.stringify(config, null, 2);
+      fs.writeFile(path.join(__dirname, "..", "config.json"), data, (error) => {
+        if (error) throw error;
+        DEBUG &&
+          console.log("Changed config.json file to include new attribute");
+        DEBUG && console.log(`Config file after change:\n`, JSON.parse(data));
+      });
+      myEmitter.emit(
+        "cmd",
+        "config.addConfig()",
+        "ADD CONFIG",
+        "Attribute added to config file"
+      );
+      console.log("Attribute added to config file.");
+    }
   });
 };
 

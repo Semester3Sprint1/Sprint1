@@ -83,17 +83,13 @@ const newToken = (username, location = "") => {
   });
 
   if (!match) {
-    if (location === "client") {
-      // If the function is coming from the clinet-side, we will run these variables through the function
-      newToken.email = email;
-      newToken.phone = phone;
-    } else {
-      // Otherwise, we will prompt the user to enter the values now.
+    if (location !== "client") {
+      // Prompt the user to enter the values
       // Validate email
       var valid = false;
       while (!valid) {
-        newToken.email = prompt("Enter your email address: ");
-        if (newTokenEmail(newToken.email)) {
+        var email = prompt("Enter your email address: ");
+        if (newTokenEmail(email)) {
           valid = true;
         }
       }
@@ -101,14 +97,17 @@ const newToken = (username, location = "") => {
       // Validate phone number
       var valid = false;
       while (!valid) {
-        newToken.phone = prompt("Enter your phone number: ");
-        if (newTokenPhone(newToken.phone)) {
+        var phone = prompt("Enter your phone number: ");
+        if (newTokenPhone(phone)) {
           valid = true;
         }
       }
     }
 
+    // Set values of the new token
     newToken.username = username;
+    newToken.email = newTokenEmail(email);
+    newToken.phone = newTokenPhone(phone);
     newToken.token = crc32(username).toString(16);
     newToken.created = now.toLocaleDateString();
     newToken.expires = expires.toLocaleDateString();
@@ -308,6 +307,7 @@ const editDetail = (arg, username) => {
           "INFO",
           "Edited token detail"
         );
+        console.log("Token updated.");
       });
     }
   });
@@ -388,6 +388,7 @@ const confirmToken = (userToken) => {
         "INFO",
         "Token verified by user"
       );
+      console.log("Token confirmed.");
     });
   }
 };
@@ -401,6 +402,7 @@ const loginOutput = (updateToken, match, matchID) => {
     console.log("Invalid token ID. Please try again.");
   } else {
     myEmitter.emit("cmd", "token.login()", "INFO", "Login successful");
+    console.log("Login successful.");
   }
 };
 

@@ -11,13 +11,13 @@ const server = http.createServer((req, res) => {
   var path = "./html/";
 
   if (req.method == "POST") {
-    handleXHR(req);
+    handleXHR(req, res);
   }
   // This code runs if the client makes a POST request (which they will if they fill out the "new token" form)
   switch (req.url) {
     case "/":
       res.statusCode = 200;
-      path += "token.html";
+      path += "index.html";
       routes.displayFile(path, res, "Home");
       break;
     case "/style":
@@ -40,11 +40,6 @@ const server = http.createServer((req, res) => {
       path += "token.html";
       routes.displayFile(path, res, "Token");
       break;
-    case "/about":
-      res.statusCode = 200;
-      path += "about.html";
-      routes.displayFile(path, res, "About");
-      break;
     case "/tokens":
       res.statusCode = 200;
       path = "./tokens.json";
@@ -64,7 +59,7 @@ const runServer = () => {
   console.log(`Server listening on port ${port}, press CTRL + C to cancel...`);
 };
 
-const handleXHR = (req) => {
+const handleXHR = (req, res) => {
   DEBUG && console.log("POST");
   let buffer = "";
   let decoder = new StringDecoder();
