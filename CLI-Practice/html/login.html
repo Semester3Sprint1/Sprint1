@@ -125,25 +125,22 @@
       form.addEventListener("submit", (event) => {
         event.preventDefault();
         // let confirmed = await confirmToken();
-        let confirmed = true;
-        if (confirmed) {
-          console.log("doing the XHR thing");
-          let payload = {};
-          let elements = form.elements;
-          console.log(elements);
-          for (let i = 0; i < elements.length; i++) {
-            if (elements[i].type !== "submit") {
-              payload[elements[i].name] = elements[i].value;
-            }
+        console.log("doing the XHR thing");
+        let payload = {};
+        let elements = form.elements;
+        console.log(elements);
+        for (let i = 0; i < elements.length; i++) {
+          if (elements[i].type !== "submit") {
+            payload[elements[i].name] = elements[i].value;
           }
-          let xhr = new XMLHttpRequest();
-          xhr.open("POST", "/");
-          xhr.setRequestHeader("Content-Type", "application/json");
-          console.log("payload", payload);
-          let payloadString = JSON.stringify(payload);
-          console.log("payload String", payloadString);
-          xhr.send(payloadString);
         }
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        console.log("payload", payload);
+        let payloadString = JSON.stringify(payload);
+        console.log("payload String", payloadString);
+        xhr.send(payloadString);
       });
     </script>
   </body>
