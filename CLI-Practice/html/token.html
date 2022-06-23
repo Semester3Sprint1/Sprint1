@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sprint 1 - Full Stack Development</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/style" />
+    <!-- <link rel="stylesheet" href="../css/style.css" /> -->
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="http://localhost:3000/">Home</a></li>
+          <li><a href="http://localhost:3000/token">Create an Account</a></li>
+          <li>
+            <a href="http://localhost:3000/login">Account Confirmation</a>
+          </li>
+          <li><a href="http://localhost:3000/tokens">Tokens (JSON)</a></li>
+          <li><a href="http://localhost:3000/config">Config (JSON)</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h1>Full Stack JavaScript Project</h1>
+      <h2>Web Application for Confirming User Accounts</h2>
+
+      <div id="form">
+        <h3>Create New Account</h3>
+        <form
+          action="http://localhost:3000/"
+          method="post"
+          id="newToken"
+          onsubmit=""
+        >
+          <label for="username">Full Name</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            onclick="//resetClass()"
+            onchange="checkToken()"
+          />
+
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" />
+
+          <label for="phone">Phone Number</label>
+          <input type="phone" id="phone" name="phone" />
+
+          <input id="tokenSubmit" type="submit" value="Submit" />
+        </form>
+      </div>
+
+      <div id="tokenButton">
+        <button class="summonToken">Show User List</button>
+      </div>
+
+      <div class="tokenHolder"></div>
+    </main>
+    <script>
+      var summonButton = document.getElementsByClassName("summonToken")[0];
+      var submitButton = document.getElementById("tokenSubmit");
+      var tokenButton = document.querySelector("#tokenButton");
+      var container = document.querySelector(".tokenHolder");
+
+      const fetchToken = async (id) => {
+        try {
+          const res = await fetch(`http://localhost:3000/tokens/${id}`);
+          const data = await res.json();
+          console.log(data);
+          return data;
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      const fetchTokens = async () => {
+        try {
+          const res = await fetch("http://localhost:3000/tokens");
+          const data = await res.json();
+          console.log(data);
+          return data;
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      const checkToken = async () => {
+        // e.preventDefault();
+        var name = document.querySelector("#username");
+        let tokens = await fetchTokens();
+        let match = false;
+        tokens.forEach((token) => {
+          if (token.username.toLowerCase() === name.value.toLowerCase()) {
+            match = true;
+          }
+        });
+        if (match) {
+          name.className = "invalid";
+          // alert("Error! That username already exists!");
+        } else {
+          name.className = "valid";
+        }
+      };
+
+      const resetClass = () => {
+        var name = document.querySelector("#username");
+        name.className = "";
+      };
+
+      function checkDays(expiry) {
+        let now = new Date().getDate();
+        var expire = new Date(expiry).getDate() + 1; // The + 1 is used here because the expiry date was rounding down
+        if (expire < now) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      const showTokens = async () => {
+        let tokens = await fetchTokens();
+        let output = "";
+        tokens.forEach((token) => {
+          // Check to see if token has expired - this will have an effect on the CSS
+          if (checkDays(token.expires)) {
+            var tokenClass = "invalid";
+            var tokenText = "Token Expired";
+          } else {
+            var tokenClass = "valid";
+            var tokenText = "Token Valid";
+          }
+          output += `<div class="token"><div> <span>Username:</span> <span>${token.username}</span> </div>
+            <div><span>Email:</span > <span>${token.email}</span> </div>
+            <div><span>Phone Number:</span> <span>${token.phone}</span> </div>
+            <div><span>Expiry:</span> <span>${token.expires}</span> </div>
+            <div><span>Token ID:</span> <span>${token.token}</span> </div>
+            <div><span>Confirmed User:</span> <span>${token.confirmed}</span> </div>
+            <div class=${tokenClass}><span></span>${tokenText}<span></span></div></div>`;
+        });
+        container.innerHTML = output;
+        tokenButton.innerHTML = `<button class="hideToken">Hide User List</button>`;
+        var hideButton = document.getElementsByClassName("hideToken")[0];
+
+        hideButton.addEventListener("click", () => {
+          hideTokens();
+        });
+      };
+
+      // const getToken = async () => {
+      //   let tokens = await fetchTokens();
+      //   let token = tokens[tokens.length - 1];
+      //   alert(`Your token ID is: ${token.token}`);
+      // };
+
+      const hideTokens = () => {
+        container.innerHTML = ``;
+        tokenButton.innerHTML = `<button class="summonToken">Show User List</button>`;
+
+        var summonButton = document.getElementsByClassName("summonToken")[0];
+
+        summonButton.addEventListener("click", () => {
+          showTokens();
+        });
+      };
+
+      summonButton.addEventListener("click", () => {
+        showTokens();
+      });
+
+      const newTokenPhone = (phoneNum) => {
+        var phoneNum = phoneNum.replace(/[()-\s]/g, "");
+        if (phoneNum.length !== 10) {
+          alert("Invalid entry. Phone numbers must contain 10 characters.");
+          return false;
+        } else if (isNaN(phoneNum)) {
+          alert("Invalid entry. A phone number can only contain numbers.");
+          return false;
+        } else {
+          return phoneNum;
+        }
+      };
+
+      const newTokenEmail = (email) => {
+        if (/@/.test(email) && /\./.test(email)) {
+          return email;
+        } else {
+          alert("Invalid entry. This is not a valid email address.");
+          return false;
+        }
+      };
+
+      let form = document.querySelector("#newToken");
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        // Validate the email address & phone number
+        var email = document.querySelector("#email").value;
+        var phone = document.querySelector("#phone").value;
+        if (newTokenEmail(email) && newTokenPhone(phone)) {
+          console.log("doing the XHR thing");
+          let payload = {};
+          let elements = form.elements;
+          console.log(elements);
+          for (let i = 0; i < elements.length; i++) {
+            if (elements[i].type !== "submit") {
+              payload[elements[i].name] = elements[i].value;
+            }
+          }
+          let xhr = new XMLHttpRequest();
+          xhr.open("POST", "/");
+          xhr.setRequestHeader("Content-Type", "application/json");
+          console.log("payload", payload);
+          let payloadString = JSON.stringify(payload);
+          console.log("payload String", payloadString);
+          xhr.send(payloadString);
+        }
+      });
+    </script>
+  </body>
+</html>

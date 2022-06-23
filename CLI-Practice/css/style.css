@@ -1,0 +1,228 @@
+/* General */
+html {
+  background-color: rgba(247, 240, 230, 0.8);
+  color: rgba(236, 236, 236, 1);
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  border: 1px solid #5f5f5f;
+  box-shadow: 10px 10px 4px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  margin: 3% 25%;
+  padding: 24px;
+  background-color: rgba(53, 101, 42, 0.8);
+}
+
+h1,
+h2,
+h3 {
+  text-align: center;
+}
+
+/* Nav */
+
+nav {
+  background-color: rgba(53, 101, 42, 0.8);
+  border-bottom: 1px solid black;
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+nav ul {
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  justify-content: space-evenly;
+  list-style: none;
+}
+
+/* nav ul li:hover {
+  background-color: white;
+} */
+
+nav ul li a {
+  text-decoration: none;
+  color: rgba(236, 236, 236, 1);
+}
+
+/* ---- HOME PAGE ---- */
+
+#about {
+  font-size: 1.25em;
+}
+
+/* ---- TOKEN PAGE ---- */
+
+/* Token Display Area */
+.tokenHolder {
+  margin: 3% auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.token {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid black;
+  /* background-color: rgba(248, 251, 95, 0.336); */
+  gap: 8px;
+}
+
+.valid {
+  background-color: green;
+  color: white;
+}
+
+.invalid {
+  background-color: red;
+  color: white;
+}
+
+.token div {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Show/Hide Button */
+.summonToken,
+.hideToken {
+  text-align: center;
+  margin: auto 12.5%;
+  width: 75%;
+  font-weight: 700;
+  background-color: rgba(212, 175, 55, 0.8);
+  border: 1px solid black;
+  border-radius: 8px;
+  transition: 0.2s;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.summonToken:hover,
+.hideToken:hover {
+  background-color: grey;
+  transition: 0.2s;
+}
+
+.summonToken a,
+.hideToken {
+  color: black;
+  text-decoration: none;
+}
+
+/* New Token Form */
+#form {
+  margin: 3% auto;
+  border: 1px solid black;
+  background-color: rgba(251, 213, 95, 0.2);
+  border-radius: 8px;
+}
+
+#form h3 {
+  font-size: 2em;
+  margin: 1% auto auto auto;
+}
+
+#newToken {
+  display: grid;
+  padding: 2em;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  align-items: center;
+}
+
+#newToken label {
+  font-weight: 700;
+  font-size: 1.2em;
+  height: 100%;
+}
+
+#newToken input {
+  border-radius: 8px;
+  height: 2em;
+  transition: ease-in-out 0.2s;
+}
+
+/* #newToken input:hover {
+  background-color: lightgrey;
+  transition: ease-in-out 0.2s;
+} */
+
+#tokenSubmit {
+  /* padding: 16px; */
+  background-color: rgba(212, 175, 55, 0.8);
+  cursor: pointer;
+  font-size: 1.25em;
+  margin: auto;
+  /* align-items: center;
+  text-align: center; */
+  width: 25%;
+  border-radius: 8px;
+  transition: 0.2s ease-in-out;
+  grid-column: span 2;
+}
+
+#tokenSubmit:hover,
+#loginSubmit:hover {
+  background-color: grey;
+  color: white;
+  transition: 0.2s ease-in-out;
+}
+
+/* ---- LOGIN PAGE --- */
+/* Login Form */
+
+#loginPage {
+  margin: 5% 35%;
+  padding: 3%;
+}
+
+#login {
+  margin-top: 10%;
+}
+
+#login div {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 16px;
+  margin: 20px;
+}
+
+#login div label {
+  font-size: 1.25em;
+}
+
+#login div input {
+  width: auto;
+  margin: auto 10%;
+  height: 2em;
+  border-radius: 8px;
+}
+
+#loginSubmit {
+  /* padding: 16px; */
+  background-color: rgba(212, 175, 55, 0.8);
+  cursor: pointer;
+  font-size: 1.25em;
+  margin: auto;
+  /* align-items: center;
+  text-align: center; */
+  width: 25%;
+  border-radius: 8px;
+  transition: 0.2s ease-in-out;
+}
+
+@media only screen and (max-width: 1200px) {
+  #loginPage {
+    margin: 5% 25%;
+    padding: 2%;
+  }
+}
