@@ -20,8 +20,8 @@ const tokenApp = () => {
     case "--new":
       newToken(myArgs[2]);
       break;
-    case "--add":
-      editDetail(myArgs[2], myArgs[3], myArgs[4]);
+    case "--edit":
+      editDetail(myArgs[2], myArgs[3]);
       break;
     case "--count":
       countTokens();
@@ -29,11 +29,11 @@ const tokenApp = () => {
     case "--search":
       searchToken(myArgs[2], myArgs[3]);
       break;
-    case "--expired":
-      checkExpire();
-      break;
     case "--login":
-      login(myArgs[2]);
+      login(myArgs[2], myArgs[3]);
+      break;
+    case "--show":
+      showTokens(myArgs[2]);
       break;
     case "help":
     case "h":
@@ -51,10 +51,26 @@ const tokenApp = () => {
   }
 };
 
+const showTokens = (arg) => {
+  if (arg === "confirmed") {
+    showConfirmedTokens();
+  } else if (arg === "expired") {
+    checkExpire();
+  } else {
+    myEmitter.emit("cmd", "token.showToken()", "INFO", "Display tokens file");
+    fs.readFile(path.join(__dirname, "..", "tokens.json"), (error, data) => {
+      if (error) throw error;
+      else {
+        DEBUG && console.log("display current tokens");
+        console.log(JSON.parse(data));
+      }
+    });
+  }
+};
+
 const searchToken = (arg, element) => {
   fs.readFile(tokenPath, (error, data) => {
     if (error) throw error;
-    // if (DEBUG) console.log(JSON.parse(data));
     let tokens = JSON.parse(data);
     let match = false;
     myEmitter.emit("cmd", "token.searchToken()", "INFO", "Searched for token");
@@ -92,20 +108,50 @@ const countTokens = () => {
   });
 };
 
-const editDetail = (arg, username, element) => {
+const showConfirmedTokens = () => {
+  fs.readFile(tokenPath, (error, data) => {
+    if (error) throw error;
+    myEmitter.emit(
+      "cmd",
+      "token.showConfirmedTokens()",
+      "INFO",
+      "Showed tokens that have been confirmed by user"
+    );
+    let tokens = JSON.parse(data);
+    tokens.forEach((token) => {
+      if (token.confirmed === true) {
+        console.log(token);
+      }
+    });
+    console.log("\nCheck complete.");
+  });
+};
+
+const editDetail = (arg, username) => {
   let match = false;
   fs.readFile(tokenPath, (error, data) => {
     if (error) throw error;
     // if (DEBUG) console.log(JSON.parse(data));
     let tokens = JSON.parse(data);
+    var valid = false;
 
     tokens.forEach((token) => {
       if (token.username === username) {
         // Check for the argument here - it will determine which field of the token will be changed
         if (arg === "p") {
-          token.phone = element;
+          while (!valid) {
+            token.phone = prompt("Enter your phone number: ");
+            if (newTokenPhone(token.phone)) {
+              valid = true;
+            }
+          }
         } else if (arg === "e") {
-          token.email = element;
+          while (!valid) {
+            token.email = prompt("Enter your email address: ");
+            if (newTokenEmail(token.email)) {
+              valid = true;
+            }
+          }
         } else {
           console.log("Error. Invalid argument entered. Please try again.");
         }
@@ -135,7 +181,9 @@ const editDetail = (arg, username, element) => {
 const newToken = (username, location = "") => {
   let now = new Date();
   let expires = addDays(now, 3);
-  if (location === "client") var object = username;
+  if (location === "client") {
+    var { username, email, phone } = username;
+  }
 
   // Create default newToken object, we will modify this and save it to the file
   let newToken = JSON.parse(`{
@@ -145,40 +193,48 @@ const newToken = (username, location = "") => {
     "phone": "7096548900",
     "token": "token",
     "expires": "1969-02-03 12:30:00",
-    "confirmed": "tbd"
+    "confirmed": false
 }`);
 
   let userTokens = fs.readFileSync(tokenPath, "utf-8"); // Scan file, save list of users to this variable
   let tokens = JSON.parse(userTokens);
   let match = false;
-  if (location === "client") {
-    tokens.forEach((token) => {
-      if (token.username === object.username) {
-        match = true;
-      }
-    });
-  } else {
-    tokens.forEach((token) => {
-      if (token.username === username) {
-        match = true;
-      }
-    });
-  }
+
+  // Validate the username to make sure that it is not already in use
+  tokens.forEach((token) => {
+    if (token.username === username) {
+      match = true;
+    }
+  });
 
   if (!match) {
     if (location === "client") {
       // If the function is coming from the clinet-side, we will run these variables through the function
-      newToken.username = object.username;
-      newToken.email = object.email;
-      newToken.phone = object.phone;
-      newToken.token = crc32(object.username).toString(16);
+      newToken.email = email;
+      newToken.phone = phone;
     } else {
       // Otherwise, we will prompt the user to enter the values now.
-      newToken.username = username;
-      newToken.email = prompt("Enter your email: ");
-      newToken.phone = prompt("Enter your phone number: ");
-      newToken.token = crc32(username).toString(16);
+      // Validate email
+      var valid = false;
+      while (!valid) {
+        newToken.email = prompt("Enter your email address: ");
+        if (newTokenEmail(newToken.email)) {
+          valid = true;
+        }
+      }
+
+      // Validate phone number
+      var valid = false;
+      while (!valid) {
+        newToken.phone = prompt("Enter your phone number: ");
+        if (newTokenPhone(newToken.phone)) {
+          valid = true;
+        }
+      }
     }
+
+    newToken.username = username;
+    newToken.token = crc32(username).toString(16);
     newToken.created = now.toLocaleDateString();
     newToken.expires = expires.toLocaleDateString();
 
@@ -196,13 +252,37 @@ const newToken = (username, location = "") => {
   }
 };
 
+const newTokenPhone = (phoneNum) => {
+  // Validates the phone number passed into the function
+  var phoneNum = phoneNum.replace(/[()-\s]/g, "");
+  if (phoneNum.length !== 10) {
+    console.log("Invalid entry. Phone numbers must contain 10 characters.");
+    return false;
+  } else if (isNaN(phoneNum)) {
+    console.log("Invalid entry. A phone number can only contain numbers.");
+    return false;
+  } else {
+    return phoneNum;
+  }
+};
+
+const newTokenEmail = (email) => {
+  // Validates an email address
+  if (/@/.test(email) && /\./.test(email)) {
+    return email;
+  } else {
+    console.log("Invalid entry. This is not a valid email address.");
+    return false;
+  }
+};
+
 const confirmToken = (userToken) => {
   let userTokens = fs.readFileSync(tokenPath, "utf-8"); // Scan file, save list of users to this variable
   let tokens = JSON.parse(userTokens);
   let match = false;
   tokens.forEach((token) => {
     if (token.username === userToken.username) {
-      if (token.token === userToken.tokenID) {
+      if (token.token === userToken.token) {
         token.confirmed = true;
         match = true;
       } else console.log("Invalid TokenID");
@@ -215,7 +295,12 @@ const confirmToken = (userToken) => {
     fs.writeFile(tokenPath, userTokens, (err) => {
       if (err) throw err;
       DEBUG && console.log(userTokens);
-      myEmitter.emit("cmd", "token.newToken()", "INFO", "Added new token");
+      myEmitter.emit(
+        "cmd",
+        "token.confirmToken()",
+        "INFO",
+        "Token verified by user"
+      );
     });
   }
 };
@@ -235,7 +320,6 @@ const checkExpire = () => {
     if (error) throw error;
     // if (DEBUG) console.log(JSON.parse(data));
     let tokens = JSON.parse(data);
-    let match = false;
     myEmitter.emit(
       "cmd",
       "token.checkExpire()",
@@ -245,58 +329,72 @@ const checkExpire = () => {
 
     tokens.forEach((token) => {
       if (checkDays(token.expires)) {
-        console.log(token.username, "- I have expired");
-        console.log();
-      } else {
-        console.log(token.username, "- I have not expired");
-        console.log();
+        console.log(token);
       }
     });
+    console.log("\nCheck complete.");
   });
 };
 
-const login = (username, token) => {
+const login = (username, tokenID) => {
   fs.readFile(tokenPath, (error, data) => {
     if (error) throw error;
     // if (DEBUG) console.log(JSON.parse(data));
     let tokens = JSON.parse(data);
     let match = false;
+    let matchID = false;
+    let updateToken = false;
     myEmitter.emit("cmd", "token.login()", "INFO", "Login attempted");
 
     tokens.forEach((token) => {
       if (token.username === username) {
         DEBUG && console.log("Step 1 complete - user found");
         match = true;
-        if (!checkDays(token.expires)) {
-          console.log(`Token valid. Login complete. Welcome, ${username}.`);
-        } else {
-          console.log(
-            "Token has expired. System will create new token for user."
-          );
-          // Update existing user
-          token.expires = addDays(new Date(), 3).toLocaleDateString();
-          data = JSON.stringify(tokens, null, 2);
-          fs.writeFile(tokenPath, data, (error) => {
-            if (error) throw error;
-            myEmitter.emit(
-              "cmd",
-              "token.login()",
-              "INFO",
-              "Updated token expiry"
+
+        if (token.token === tokenID) {
+          DEBUG &&
+            console.log("Step 2 complete - token entered matches user token");
+          matchID = true;
+
+          if (!checkDays(token.expires)) {
+            DEBUG && console.log("Step 3 complete - token is not expired");
+            console.log(`Token valid. Login complete. Welcome, ${username}.`);
+            confirmToken(token);
+          } else {
+            console.log(
+              "Token has expired. System will create new token for user."
             );
-          });
-          // Create new user
-          // newToken(token, "client");
-          // console.log("Please repeat login with new token.");
+            // Update existing user
+            token.expires = addDays(new Date(), 3).toLocaleDateString();
+            data = JSON.stringify(tokens, null, 2);
+            fs.writeFile(tokenPath, data, (error) => {
+              if (error) throw error;
+              myEmitter.emit(
+                "cmd",
+                "token.login()",
+                "INFO",
+                "Updated token expiry"
+              );
+            });
+            updateToken = true;
+          }
         }
       }
     });
-    if (!match) {
-      console.log("Invalid credentials. Username does not exist.");
-    } else {
-      myEmitter.emit("cmd", "token.login()", "INFO", "Login successful");
-    }
+    loginOutput(updateToken, match, matchID);
   });
+};
+
+const loginOutput = (updateToken, match, matchID) => {
+  if (updateToken) {
+    console.log("Expiry date updated. Please repeat login.");
+  } else if (!match) {
+    console.log("Invalid credentials. Username does not exist.");
+  } else if (!matchID) {
+    console.log("Invalid token ID. Please try again.");
+  } else {
+    myEmitter.emit("cmd", "token.login()", "INFO", "Login successful");
+  }
 };
 
 module.exports = { tokenApp, newToken, checkDays, confirmToken };

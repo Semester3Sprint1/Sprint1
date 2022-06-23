@@ -130,9 +130,12 @@
             var tokenClass = "valid";
             var tokenText = "Token Valid";
           }
-          output += `<div class="token"><div><span>Username:</span> <span>${token.username}</span></div><div><span>Email:</span>
-            <span>${token.email}</span></div><div><span>Phone:</span> <span>${token.phone}</span></div><div><span>Expiry:</span> <span>${token.expires}</span></div>
-            <div><span>Token ID:</span> <span>${token.token}</span></div>
+          output += `<div class="token"><div> <span>Username:</span> <span>${token.username}</span> </div>
+            <div><span>Email:</span > <span>${token.email}</span> </div>
+            <div><span>Phone Number:</span> <span>${token.phone}</span> </div>
+            <div><span>Expiry:</span> <span>${token.expires}</span> </div>
+            <div><span>Token ID:</span> <span>${token.token}</span> </div>
+            <div><span>Confirmed User:</span> <span>${token.confirmed}</span> </div>
             <div class=${tokenClass}><span></span>${tokenText}<span></span></div></div>`;
         });
         container.innerHTML = output;
@@ -144,11 +147,11 @@
         });
       };
 
-      const getToken = async () => {
-        let tokens = await fetchTokens();
-        let token = tokens[tokens.length - 1];
-        alert(`Your token ID is: ${token.token}`);
-      };
+      // const getToken = async () => {
+      //   let tokens = await fetchTokens();
+      //   let token = tokens[tokens.length - 1];
+      //   alert(`Your token ID is: ${token.token}`);
+      // };
 
       const hideTokens = () => {
         container.innerHTML = ``;
@@ -165,26 +168,53 @@
         showTokens();
       });
 
+      const newTokenPhone = (phoneNum) => {
+        var phoneNum = phoneNum.replace(/[()-\s]/g, "");
+        if (phoneNum.length !== 10) {
+          alert("Invalid entry. Phone numbers must contain 10 characters.");
+          return false;
+        } else if (isNaN(phoneNum)) {
+          alert("Invalid entry. A phone number can only contain numbers.");
+          return false;
+        } else {
+          return phoneNum;
+        }
+      };
+
+      const newTokenEmail = (email) => {
+        if (/@/.test(email) && /\./.test(email)) {
+          return email;
+        } else {
+          alert("Invalid entry. This is not a valid email address.");
+          return false;
+        }
+      };
+
       let form = document.querySelector("#newToken");
 
       form.addEventListener("submit", (event) => {
         event.preventDefault();
-        console.log("doing the XHR thing");
-        let payload = {};
-        let elements = form.elements;
-        console.log(elements);
-        for (let i = 0; i < elements.length; i++) {
-          if (elements[i].type !== "submit") {
-            payload[elements[i].name] = elements[i].value;
+        // Validate the email address & phone number
+        var email = document.querySelector("#email").value;
+        var phone = document.querySelector("#phone").value;
+        if (newTokenEmail(email) && newTokenPhone(phone)) {
+          console.log("doing the XHR thing");
+          let payload = {};
+          let elements = form.elements;
+          console.log(elements);
+          for (let i = 0; i < elements.length; i++) {
+            if (elements[i].type !== "submit") {
+              payload[elements[i].name] = elements[i].value;
+            }
           }
+          let xhr = new XMLHttpRequest();
+          xhr.open("POST", "/");
+          xhr.setRequestHeader("Content-Type", "application/json");
+          console.log("payload", payload);
+          let payloadString = JSON.stringify(payload);
+          console.log("payload String", payloadString);
+          xhr.send(payloadString);
         }
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "/");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        console.log("payload", payload);
-        let payloadString = JSON.stringify(payload);
-        console.log("payload String", payloadString);
-        xhr.send(payloadString);
       });
     </script>
   </body>
