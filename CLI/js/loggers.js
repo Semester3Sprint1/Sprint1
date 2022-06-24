@@ -8,20 +8,7 @@ const path = require("path");
 const logTraffic = async (location, res) => {
   const dateTime = `${format(new Date(), "yyyy-MM-dd   HH:mm:ss")}`;
 
-  switch (res.statusCode) {
-    case 404:
-      var status = "FILE NOT FOUND";
-      break;
-    case 410:
-      var status = "GONE";
-      break;
-    case 418:
-      var status = "I'M A TEAPOT";
-      break;
-    default:
-      var status = "OK";
-      break;
-  }
+  var status = checkStatus(res.statusCode);
 
   if (location !== "CSS") {
     if (location === "Tokens") {
@@ -69,6 +56,19 @@ const logTotal = async () => {
   const dateTime = `${format(new Date(), "yyyy-MM-dd   HH:mm:ss")}`;
   const totalItem = `${dateTime} \t Page visits since server open: ${visitCount}`;
   console.log(totalItem);
+};
+
+const checkStatus = (res) => {
+  switch (res.statusCode) {
+    case 404:
+      return "FILE NOT FOUND";
+    case 410:
+      return "GONE";
+    case 418:
+      return "I'M A TEAPOT";
+    default:
+      return "OK";
+  }
 };
 
 module.exports = { logTraffic, logTotal, logCommand };

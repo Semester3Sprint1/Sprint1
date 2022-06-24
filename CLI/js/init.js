@@ -17,9 +17,7 @@ const initApp = () => {
     case "--mk":
       DEBUG && console.log("--mk accessed - create init file and directory");
       createInit();
-      setTimeout(() => {
-        console.log("Initialization complete.");
-      }, 1000);
+      wait(1000);
       break;
     case "--cat":
       DEBUG &&
@@ -27,28 +25,20 @@ const initApp = () => {
           "--cat accessed - creates the config file with default settings"
         );
       createConfig();
-      setTimeout(() => {
-        console.log("Initialization complete.");
-      }, 1000);
+      wait(1000);
       break;
     case "--tkn":
       DEBUG && console.log("--tkn accessed - creates the token file");
       createToken();
-      setTimeout(() => {
-        console.log("Initialization complete.");
-      }, 1000);
+      wait(1000);
       break;
     case "--all":
       DEBUG &&
         console.log(
           "--all accessed - creates init files, config file and directory, & token files"
         );
-      createInit();
-      createConfig();
-      createToken();
-      setTimeout(() => {
-        console.log("Initialization complete.");
-      }, 1000);
+      createAll();
+      wait(1000);
       break;
     case "help":
     case "h":
@@ -156,6 +146,18 @@ const createConfig = () => {
   } catch (err) {
     console.log(err);
   }
+};
+
+const wait = (time) => {
+  setTimeout(() => {
+    console.log("Initialization complete.");
+  }, time);
+};
+
+const createAll = () => {
+  createInit();
+  createConfig();
+  createToken();
 };
 
 module.exports = { initApp };
