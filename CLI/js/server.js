@@ -73,7 +73,7 @@ const handleXHR = (req, res) => {
     usableData = JSON.parse(buffer);
     DEBUG && console.log("usable data:", usableData);
 
-    // Right now, since we only have two uses for this, we can seperate them based on the length of the Object sent. We'll need to change this if we expand further.
+    // Right now, since we only have two uses for this, we can seperate them based on the length of the Object sent. We'll need to change this if we expand further
     if (Object.keys(usableData).length === 3) {
       newToken(usableData, "client");
     } else {
