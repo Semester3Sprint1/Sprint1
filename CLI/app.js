@@ -1,7 +1,7 @@
 /****************
  * Semester 3, Sprint 1
  *
- * Team 1 - Members: Alex Ridgeley, Mike Wadden, Cody Barrett
+ * Team 1 - Alex Ridgeley, Mike Wadden, Cody Barrett
  *
  * Due Date: 24 June 2022
  *
